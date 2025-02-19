@@ -1,0 +1,13 @@
+<div
+  class="w-full overflow-y-auto custom-scrollbar p-4 flex flex-col items-center"
+>
+  <div class="space-y-4 max-w-3xl">
+    @for (message of messages(); track messages) {
+    <div>
+      <p>{{ message }}</p>
+    </div>
+    } @empty {
+      <p>No messages</p>
+    }
+  </div>
+</div>
