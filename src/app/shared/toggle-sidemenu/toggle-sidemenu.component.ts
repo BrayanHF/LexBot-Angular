@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
+import { SideMenuService } from '../services/side-menu.service';
 
 @Component({
   selector: 'shared-toggle-sidemenu',
@@ -6,4 +7,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   templateUrl: './toggle-sidemenu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToggleSidemenuComponent {}
+export class ToggleSidemenuComponent {
+
+  private sideMenuService = inject(SideMenuService);
+
+  public toggleSideMenu(): void {
+    this.sideMenuService.toggleSideMenu();
+  }
+
+}

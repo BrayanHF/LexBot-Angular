@@ -1,11 +1,13 @@
-<div class="flex h-screen w-screen text-white">
-
-  <div>
-    <shared-sidemenu />
+<div class="flex h-screen w-screen text-black">
+  <div
+    class="transition-all duration-300"
+    [class.w-64]="showSideMenu()"
+    [class.w-0]="!showSideMenu()"
+  >
+    <shared-sidemenu/>
   </div>
 
   <div class="grow">
-    <chat-conversation />
+    <chat-conversation/>
   </div>
-
 </div>

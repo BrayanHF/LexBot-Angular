@@ -1,36 +1,39 @@
-<div class="h-screen w-64 bg-neutral-950 p-2 flex flex-col">
+<div class="h-screen w-64 bg-teal-200 p-2 flex flex-col justify-between">
   <div>
     <div class="flex justify-between items-center mb-2 p-2">
       <h1 class="text-2xl font-bold">LexBot</h1>
-
-      <!-- Todo: Toggle side menu -->
       <shared-toggle-sidemenu />
     </div>
 
-    <!-- Todo: Hide when there are no chats-->
-    <hr class="border-t-2 border-neutral-900" />
-
-    <!-- Todo: Chat list -->
-
-    <hr class="border-t-2 border-neutral-900" />
-
-    <!-- Todo: New chat -->
-    <div class="mt-2 p-2 hover:bg-neutral-800 cursor-pointer rounded-xl">
+    @for (chat of chats(); track chats) {
+    <div
+      class="my-2 p-2 bg-teal-300 hover:bg-teal-500 cursor-pointer rounded-xl"
+    >
       <div class="flex items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="size-6 mr-2"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        <p>New chat</p>
+        <p>{{ chat.title }}</p>
+        <!-- todo: actions -->
       </div>
     </div>
+
+    }
   </div>
+
+  <!-- Todo: New chat -->
+  <button class="mt-4 p-2 hover:bg-teal-500 cursor-pointer rounded-xl">
+    <div class="flex items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="size-6 mr-2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <p>New chat</p>
+    </div>
+  </button>
 </div>

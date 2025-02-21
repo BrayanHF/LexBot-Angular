@@ -13,11 +13,16 @@ export class ChatService {
 
   // todo: Implement JWT and headers for authentication for all requests
 
-  public getChats(): Observable<LBApiResponse<Chat>> {
-    return this.http.get<LBApiResponse<Chat>>(this.baseUrl);
+  public getChats(): Observable<LBApiResponse<Chat[]>> {
+    return this.http.get<LBApiResponse<Chat[]>>(this.baseUrl);
   }
 
-  
+  public updateChat(
+    chatId: string,
+    updates: Map<string, Object>
+  ): Observable<LBApiResponse<Map<string, Object>>> {
+    return this.http.put<LBApiResponse<Map<string, Object>>>(this.baseUrl, { chatId, updates });
+  }
 
   public deleteChat(chatId: string): Observable<LBApiResponse<String>> {
     return this.http.delete<LBApiResponse<String>>(`${this.baseUrl}?chatId=${chatId}`);

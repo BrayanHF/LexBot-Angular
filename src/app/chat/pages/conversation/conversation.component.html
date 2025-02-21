@@ -1,10 +1,19 @@
-<div class="h-screen flex flex-col items-center bg-neutral-900">
+<div class="h-screen flex flex-col items-center bg-teal-50">
   <div class="p-2 w-full flex justify-between items-center">
-    <shared-toggle-sidemenu />
-    <chat-user-menu />
+    <div
+      class="transition-opacity duration-400"
+      [class.opacity-100]="!showSideMenu()"
+      [class.opacity-0]="showSideMenu()"
+    >
+      @if (!showSideMenu()) {
+        <shared-toggle-sidemenu/>
+      }
+    </div>
+    <span></span>
+    <chat-user-menu/>
   </div>
 
-  <chat-message-list [messages]="messages()" />
+  <chat-message-list [messages]="messages()"/>
 
-  <chat-message-input />
+  <chat-message-input/>
 </div>
