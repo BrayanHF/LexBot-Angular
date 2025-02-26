@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { SseClient } from 'ngx-sse-client';
 import { AIChatRequest } from '../interfaces/ai-chat-request.interface';
 import { map, Observable, takeWhile } from 'rxjs';
+import { ChattingResponse } from '../interfaces/chatting-response.interface';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
-import { AIChatResponse } from '../interfaces/ai-chat-response.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class ChattingService {
 
     // todo: Implement JWT
 
-    const url = isStream ? `${this.baseUrl}/stream` : this.baseUrl;
+    const url = isStream ? `${ this.baseUrl }/stream` : this.baseUrl;
     return this.sseClient
       .stream(
         url,
@@ -42,14 +42,14 @@ export class ChattingService {
 
   public starChatting(
     chatRequest: AIChatRequest
-  ): Observable<LBApiResponse<AIChatResponse>> {
+  ): Observable<LBApiResponse<ChattingResponse>> {
     return this.chattingRequest(true, chatRequest)
       .pipe(
         map(
-          response => JSON.parse(response) as LBApiResponse<AIChatResponse>
+          response => JSON.parse(response) as LBApiResponse<ChattingResponse>
         ),
         takeWhile(
-          response => response.data.choices[0].finish_reason === null,
+          response => response.data.aiChatResponse.choices[0].finish_reason === null,
           true // Emit the last value
         )
       );

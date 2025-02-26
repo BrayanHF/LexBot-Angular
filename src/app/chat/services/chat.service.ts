@@ -17,6 +17,10 @@ export class ChatService {
     return this.http.get<LBApiResponse<Chat[]>>(this.baseUrl);
   }
 
+  public getChatById(chatId: string): Observable<LBApiResponse<Chat>> {
+    return this.http.get<LBApiResponse<Chat>>(`${ this.baseUrl }/chat-id/${ chatId }`);
+  }
+
   public updateChat(
     chatId: string,
     updates: Map<string, Object>
@@ -25,6 +29,7 @@ export class ChatService {
   }
 
   public deleteChat(chatId: string): Observable<LBApiResponse<String>> {
-    return this.http.delete<LBApiResponse<String>>(`${this.baseUrl}?chatId=${chatId}`);
+    return this.http.delete<LBApiResponse<String>>(`${ this.baseUrl }/chat-id/${ chatId }`);
   }
+
 }

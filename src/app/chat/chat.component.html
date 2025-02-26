@@ -4,10 +4,10 @@
     [class.w-64]="showSideMenu()"
     [class.w-0]="!showSideMenu()"
   >
-    <shared-sidemenu/>
+    <shared-sidemenu (chatChange)="setChat($event)" />
   </div>
 
   <div class="grow">
-    <chat-conversation/>
+    <chat-conversation [chat]="chat()"/>
   </div>
 </div>
