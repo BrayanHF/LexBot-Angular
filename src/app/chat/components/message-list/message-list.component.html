@@ -1,13 +1,15 @@
+<!--todo: scroll-->
+
 <div
-  class="w-full overflow-y-auto custom-scrollbar p-4 flex flex-col items-center"
+  class=""
 >
-  <div class="space-y-4 max-w-3xl">
+  <div class="flex flex-col px-56">
     @for (message of messages(); track messages) {
-    <div>
-      <p>{{ message }}</p>
-    </div>
-    } @empty {
-    <p>No messages</p>
+      <div class="my-4"
+           [ngClass]="[message.role === 'user'? 'bg-teal-200 max-w-[75%] py-2 px-4 rounded-xl self-end': 'self-start']"
+      >
+        {{ message.text }}
+      </div>
     }
   </div>
 </div>

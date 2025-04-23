@@ -44,7 +44,6 @@ export class SidemenuComponent implements OnInit {
   }
 
   public changeChat(chat: Chat): void {
-    console.log("will change")
     if (this.currentChat().id !== chat.id) {
       this.currentChat.set(chat);
       this.chatChange.emit(chat);
@@ -63,7 +62,6 @@ export class SidemenuComponent implements OnInit {
 
   public showOptions(): void {
     // todo: implement this
-    console.log("this button has been clicked")
   }
 
 }

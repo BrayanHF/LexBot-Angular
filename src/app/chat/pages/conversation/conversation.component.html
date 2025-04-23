@@ -1,5 +1,5 @@
 <div class="h-screen flex flex-col items-center bg-teal-50">
-  <div class="p-2 w-full flex justify-between items-center">
+  <div class="p-2 w-full flex justify-between items-center border-b-1 border-b-teal-100">
     <div
       class="transition-opacity duration-400"
       [class.opacity-100]="!showSideMenu()"
@@ -13,7 +13,11 @@
     <chat-user-menu/>
   </div>
 
-  <chat-message-list [messages]="messages()"/>
+  <chat-message-list
+    class="overflow-y-auto custom-scrollbar w-full"
+    [class.h-screen]="messages().length != 0"
+    [messages]="messages()"
+  />
 
-  <chat-message-input/>
+  <chat-message-input (messageToSend)="sendMessage($event)" class="flex-1 w-full"/>
 </div>

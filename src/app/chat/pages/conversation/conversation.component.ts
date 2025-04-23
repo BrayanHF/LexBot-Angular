@@ -1,19 +1,13 @@
-import { Chat } from '../../interfaces/chat.interface';
-import { State } from '../../interfaces/state.interface';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed, effect,
-  inject, input,
-  signal,
-} from '@angular/core';
-import { ToggleSidemenuComponent } from '../../../shared/toggle-sidemenu/toggle-sidemenu.component';
-import { UserMenuComponent } from '../../components/user-menu/user-menu.component';
-import { MessageInputComponent } from '../../components/message-input/message-input.component';
-import { Message } from '../../interfaces/message.interface';
-import { ChattingService } from '../../services/chatting.service';
-import { MessageListComponent } from "../../components/message-list/message-list.component";
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, } from '@angular/core';
 import { SideMenuService } from '../../../shared/services/side-menu.service';
+import { ToggleSidemenuComponent } from '../../../shared/toggle-sidemenu/toggle-sidemenu.component';
+import { MessageInputComponent } from '../../components/message-input/message-input.component';
+import { MessageListComponent } from "../../components/message-list/message-list.component";
+import { UserMenuComponent } from '../../components/user-menu/user-menu.component';
+import { Chat } from '../../interfaces/chat.interface';
+import { Message } from '../../interfaces/message.interface';
+import { State } from '../../interfaces/state.interface';
+import { ChattingService } from '../../services/chatting.service';
 import { MessageService } from '../../services/message.service';
 
 @Component({
@@ -37,10 +31,10 @@ export default class ConversationComponent {
     loading: false,
   });
   public messages = computed(() => this.#messagesState().data);
-  public messagesLoading = computed(() => this.#messagesState().data);
+  public messagesLoading = computed(() => this.#messagesState().loading);
 
 
-  #newMessageState = signal<State<String[]>>({
+  #newMessageState = signal<State<string[]>>({
     data: [],
     loading: false,
   });
@@ -57,14 +51,12 @@ export default class ConversationComponent {
 
   public getMessages(chatId: string): void {
     this.#messagesState.update(state => ({ ...state, loading: true }));
-    console.log("getting message for chat: ", chatId);
 
     this.messageService.getMessages(chatId)
       .subscribe(
         {
           next: response => {
             const messages = response.data;
-            console.log(response)
             this.#messagesState.update(state => ({ ...state, data: messages }));
           },
           complete: () => this.#messagesState.update(state => ({ ...state, loading: false }))
@@ -77,26 +69,64 @@ export default class ConversationComponent {
       data: [],
       loading: false,
     });
-    console.log('this is for a new chat')
   }
 
-  public sendMessage(message: String): void {
-    this.#newMessageState.update(state => ({ ...state, loading: true }))
+  public sendMessage(textMessage: string): void {
+    this.newMessageIsLoading(true);
+
+    this.addMessage({ id: '', role: "user", text: textMessage });
+
+    this.addMessage({ id: '', role: "assistant", text: '...' });
 
     this.chattingService
       .starChatting({
         chatId: this.chat().id,
-        message: message
+        message: textMessage
       })
       .subscribe(
         {
           next: response => {
+
             const partMessage = response.data.aiChatResponse.choices[0].response.content;
             if (!partMessage) return;
+
             this.#newMessageState.update(state => ({ ...state, data: [ ...state.data, partMessage ] }));
+
+
+            this.updateLastMessageInStream();
+
           },
-          complete: () => this.#newMessageState.update(state => ({ ...state, loading: false }))
+          complete: () => this.newMessageIsLoading(false)
         });
   }
+
+  private newMessageIsLoading(isLoading: boolean): void {
+    this.#newMessageState.update(state => ({
+      ...state,
+      loading: isLoading
+    }))
+  }
+
+  private addMessage(message: Message): void {
+    this.#messagesState.update(state => ({
+      ...state,
+      data: [ ...state.data, message ]
+    }));
+  }
+
+  private updateLastMessageInStream(): void {
+
+    const generatedMessage = this.newMessage().join('');
+
+    const currentMessage = this.#messagesState().data;
+    const messages = [ ...currentMessage ];
+
+    messages[messages.length - 1] = { ...messages[messages.length - 1], text: generatedMessage };
+
+
+    this.#messagesState.update(state => ({ ...state, data: messages }));
+
+  }
+
 
 }

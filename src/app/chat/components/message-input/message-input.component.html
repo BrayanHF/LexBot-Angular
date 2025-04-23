@@ -1,7 +1,30 @@
-<!-- todo: better -->
-<input
-  type="text"
-  class="w-full bg-neutral-700 p-4 rounded-lg shadow-md text-white"
-  placeholder="Escribe tu mensaje..."
-  id="message"
-/>
+<div class="flex px-54 pb-4">
+  <div class="flex-1 p-2 bg-teal-100 rounded-3xl text-base text-black">
+    <div
+      #messageInput
+      (keydown)="onKeyDown($event)"
+      contenteditable="true"
+      class="max-h-60 overflow-y-auto custom-scrollbar px-4 py-2 outline-none break-all whitespace-pre-wrap"
+    >
+    </div>
+    <div class="flex justify-between">
+      <div>
+        <button>
+          <!--        todo: generated documents-->
+        </button>
+      </div>
+      <button
+        class="cursor-pointer"
+        (click)="sendMessage()"
+      >
+        <svg class="size-9 text-teal-600 hover:text-teal-700" data-slot="icon" aria-hidden="true" fill="currentColor"
+             viewBox="0 0 16 16"
+             xmlns="http://www.w3.org/2000/svg">
+          <path clip-rule="evenodd"
+                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1Zm-.75 10.25a.75.75 0 0 0 1.5 0V6.56l1.22 1.22a.75.75 0 1 0 1.06-1.06l-2.5-2.5a.75.75 0 0 0-1.06 0l-2.5 2.5a.75.75 0 0 0 1.06 1.06l1.22-1.22v4.69Z"
+                fill-rule="evenodd"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
