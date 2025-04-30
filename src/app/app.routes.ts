@@ -3,18 +3,17 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'chat',
-    loadComponent: () => import('./chat/chat.component'),
+    loadComponent: () => import('./conversation/conversation.component'),
     children: [
       {
-        path: 'conversation',
-        title: 'Conversation',
-        loadComponent: () =>
-          import('./chat/pages/conversation/conversation.component'),
+        path: '',
+        title: 'New Chat',
+        loadComponent: () => import('./conversation/pages/new-chat/new-chat.component'),
       },
       {
-        path: '',
-        redirectTo: 'conversation',
-        pathMatch: 'full',
+        path: 'c/:chatId',
+        title: 'Conversation',
+        loadComponent: () => import('./conversation/pages/chat/chat.component'),
       },
     ],
   },

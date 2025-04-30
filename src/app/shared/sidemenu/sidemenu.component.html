@@ -56,11 +56,11 @@
         </svg>
       </div>
     } @else {
-      @for (chat of chats(); track chats) {
+      @for (chat of chats(); track chat.id) {
         <div
-          (click)="changeChat(chat)"
+          [routerLink]="['/chat/c',chat.id]"
+          routerLinkActive="bg-teal-300"
           class="group flex items-center justify-between my-2 p-2 gap-2 bg-teal-200 hover:bg-teal-500 cursor-pointer rounded-xl"
-          [class.bg-teal-300]="chat.id === currentChat().id"
         >
           <div class="flex-1">
             <p>{{ chat.title }}</p>
@@ -84,7 +84,7 @@
   </div>
 
   <div
-    (click)="newChat()"
+    [routerLink]="['/chat']"
     class="mt-4 p-2 hover:bg-teal-500 cursor-pointer rounded-xl">
     <div class="flex items-center">
       <svg

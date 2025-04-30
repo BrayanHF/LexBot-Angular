@@ -1,67 +1,76 @@
-import { Chat } from '../../chat/interfaces/chat.interface';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, output, signal } from '@angular/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Chat } from '../../conversation/interfaces/chat.interface';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { ChatStateService } from '../../conversation/services/chat-state.service';
 import { ToggleSidemenuComponent } from '../toggle-sidemenu/toggle-sidemenu.component';
-import { ChatService } from '../../chat/services/chat.service';
-import { State } from '../../chat/interfaces/state.interface';
+import { ChatService } from '../../conversation/services/chat.service';
+import { State } from '../../conversation/interfaces/state.interface';
 
 @Component({
   selector: 'shared-sidemenu',
-  imports: [ ToggleSidemenuComponent ],
+  imports: [ ToggleSidemenuComponent, RouterLink, RouterLinkActive ],
   templateUrl: './sidemenu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidemenuComponent implements OnInit {
+export class SidemenuComponent {
 
+  private router = inject(Router);
+  private chatState = inject(ChatStateService);
   private chatService = inject(ChatService);
 
-  public currentChat = signal<Chat>({
-    id: '',
-    title: '',
-    lastUse: new Date()
-  });
-
-  public chatChange = output<Chat>();
-
-  #stateChats = signal<State<Chat[]>>({
+  private _stateChats = signal<State<Chat[]>>({
     data: [],
     loading: false
   });
+  public chats = computed(() => this._stateChats().data);
+  public loading = computed(() => this._stateChats().loading);
 
-  public chats = computed(() => this.#stateChats().data);
-  public loading = computed(() => this.#stateChats().loading);
-
-  ngOnInit(): void {
-    this.getChats();
+  constructor() {
+    this.init();
   }
 
-  public getChats(): void {
-    this.#stateChats.update(state => ({ ...state, loading: true }));
+  private init(): void {
+    this.loadChats();
+    this.setupNewChatWatcher();
+  }
 
-    this.chatService.getChats().subscribe({
-      next: response => this.#stateChats.update(state => ({ ...state, data: response.data })),
-      complete: () => this.#stateChats.update(state => ({ ...state, loading: false }))
+  private setupNewChatWatcher(): void {
+    effect(() => {
+      const chatId = this.chatState.chatId();
+      if (chatId == '') return;
+
+      const ids = this.chats().map(chat => chat.id);
+
+      if (!ids.includes(chatId)) {
+        this.loadChats(false, () => this.navigateToChat(chatId));
+      }
     });
   }
 
-  public changeChat(chat: Chat): void {
-    if (this.currentChat().id !== chat.id) {
-      this.currentChat.set(chat);
-      this.chatChange.emit(chat);
-    }
+  private loadChats(showLoading: boolean = true, callback?: () => void): void {
+    if (showLoading) this.setChatsLoading(true);
+
+    this.chatService.getChats().subscribe({
+      next: res => this._stateChats.update(s => ({ ...s, data: res.data })),
+      complete: () => {
+        if (showLoading) this.setChatsLoading(false);
+        callback?.();
+      },
+      error: () => this.setChatsLoading(false)
+    });
   }
 
-  public newChat(): void {
-    const chat: Chat = {
-      id: '',
-      title: '',
-      lastUse: new Date()
-    };
+  private setChatsLoading(loading: boolean): void {
+    this._stateChats.update(s => ({ ...s, loading }));
+  }
 
-    this.changeChat(chat);
+  private navigateToChat(id: string): void {
+    void this.router.navigate([ `/chat/c/${ id }` ]);
   }
 
   public showOptions(): void {
-    // todo: implement this
+    // TODO: implement this
   }
 
 }
+

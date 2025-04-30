@@ -1,0 +1,32 @@
+<div class="flex h-screen w-screen text-black">
+
+  <div
+    class="transition-all duration-300"
+    [class.w-64]="showSideMenu()"
+    [class.w-0]="!showSideMenu()"
+  >
+    <shared-sidemenu/>
+  </div>
+
+  <div class="flex-1">
+    <div class="h-screen flex flex-col items-center bg-teal-50">
+      <div class="p-2 w-full flex justify-between items-center border-b-1 border-b-teal-100">
+        <div
+          class="transition-opacity duration-400"
+          [class.opacity-100]="!showSideMenu()"
+          [class.opacity-0]="showSideMenu()"
+        >
+          @if (!showSideMenu()) {
+            <shared-toggle-sidemenu/>
+          }
+        </div>
+        <span></span>
+        <conversation-user-menu/>
+      </div>
+
+      <router-outlet/>
+
+    </div>
+  </div>
+
+</div>

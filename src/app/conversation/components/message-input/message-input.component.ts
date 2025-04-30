@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, output, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'chat-message-input',
+  selector: 'conversation-message-input',
   imports: [],
   templateUrl: './message-input.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

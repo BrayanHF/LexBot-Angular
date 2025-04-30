@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { Message } from '../../interfaces/message.interface';
 
 @Component({
-  selector: 'chat-message-list',
+  selector: 'conversation-message-list',
   imports: [
     NgClass
   ],

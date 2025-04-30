@@ -1,0 +1,10 @@
+<conversation-message-list
+  class="overflow-y-auto custom-scrollbar w-full"
+  [class.h-screen]="messages().length != 0"
+  [messages]="messages()"
+/>
+
+<conversation-message-input
+  (messageToSend)="sendMessage($event)"
+  class="flex-1 w-full"
+/>
