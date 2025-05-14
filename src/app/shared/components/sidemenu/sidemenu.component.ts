@@ -1,10 +1,10 @@
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { Chat } from '../../conversation/interfaces/chat.interface';
+import { Chat } from '../../../conversation/interfaces/chat.interface';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
-import { ChatStateService } from '../../conversation/services/chat-state.service';
+import { ChatStateService } from '../../../conversation/services/chat-state.service';
 import { ToggleSidemenuComponent } from '../toggle-sidemenu/toggle-sidemenu.component';
-import { ChatService } from '../../conversation/services/chat.service';
-import { State } from '../../conversation/interfaces/state.interface';
+import { ChatService } from '../../../conversation/services/chat.service';
+import { State } from '../../../conversation/interfaces/state.interface';
 
 @Component({
   selector: 'shared-sidemenu',

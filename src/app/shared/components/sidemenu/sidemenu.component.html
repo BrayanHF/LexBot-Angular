@@ -1,0 +1,119 @@
+<div class="h-screen bg-teal-200 p-2 flex flex-col justify-between">
+
+  <div class="flex justify-between items-center my-1.5">
+    <shared-toggle-sidemenu/>
+    <h1 [routerLink]="['/chat']" class="text-2xl font-bold mr-1">LexBot</h1>
+  </div>
+
+  <div class="relative flex-1">
+    <div
+      class="pointer-events-none absolute top-0 right-0 left-0 h-4 bg-gradient-to-b from-teal-200 to-transparent z-10">
+    </div>
+
+    <div class="absolute inset-0 overflow-y-auto custom-scrollbar ">
+      @if (loading()) {
+        <div class="flex justify-center w-full p-2">
+          <svg class="max-w-8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" overflow="visible"
+               fill="#000000"
+               stroke="none">
+            <defs>
+              <rect id="loader" x="46.5" y="40" width="7" height="20" rx="2" ry="2" transform="translate(0 -30)"/>
+            </defs>
+            <use xlink:href="#loader" transform="rotate(45 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.13s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.13s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(90 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.25s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.25s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(135 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.38s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.38s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(180 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.50s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.50s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(225 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.63s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.63s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(270 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.75s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.75s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(315 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.88s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.88s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+            <use xlink:href="#loader" transform="rotate(360 50 50)">
+              <animate attributeName="opacity" values="0;1;0" dur="1s" begin="1.00s" repeatCount="indefinite"></animate>
+              <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="1.00s"
+                                repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+            </use>
+          </svg>
+        </div>
+      } @else {
+        @for (chat of chats(); track chat.id) {
+          <div
+            [routerLink]="['/chat/c',chat.id]"
+            routerLinkActive="bg-teal-300"
+            class="group flex items-center my-1 p-2 bg-teal-200 hover:bg-teal-500 cursor-pointer rounded-xl"
+          >
+
+            <div class="flex-1 relative min-w-0">
+              <p class="overflow-hidden whitespace-nowrap">{{ chat.title }}</p>
+              <div
+                class="absolute right-0 top-0 h-full w-2 bg-gradient-to-r from-transparent to-teal-200 group-hover:to-teal-500 group-[.bg-teal-300]:to-teal-300 group-[.bg-teal-300]:group-hover:to-teal-500">
+              </div>
+            </div>
+
+            <div
+              (click)="showOptions(); $event.stopPropagation()"
+              class="opacity-0 group-hover:opacity-100 transition-opacity duration-100">
+              <svg class="w-6" data-slot="icon" aria-hidden="true" fill="none" stroke-width="1.5" stroke="currentColor"
+                   viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                  stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </div>
+
+          </div>
+        }
+      }
+    </div>
+
+    <div
+      class="pointer-events-none absolute bottom-0 right-0 left-0 h-4 bg-gradient-to-t from-teal-200 to-transparent z-10">
+    </div>
+  </div>
+
+  <div
+    [routerLink]="['/chat']"
+    class="p-2 hover:bg-teal-500 cursor-pointer rounded-xl">
+    <div class="flex items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="size-6 mr-2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <p class="overflow-hidden whitespace-nowrap">Nuevo Chat</p>
+    </div>
+  </div>
+</div>

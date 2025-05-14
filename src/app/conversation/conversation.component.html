@@ -1,31 +1,31 @@
-<div class="flex h-screen w-screen text-black">
+<div class="flex flex-row min-h-screen w-full text-black">
 
+  <!-- Sidebar -->
   <div
-    class="transition-all duration-300"
-    [class.w-64]="showSideMenu()"
-    [class.w-0]="!showSideMenu()"
+    class="transition-all duration-300 overflow-hidden"
+    [ngClass]="{
+      'w-full md:w-64': showSideMenu(),
+      'w-0': !showSideMenu()
+    }"
   >
     <shared-sidemenu/>
   </div>
 
-  <div class="flex-1">
-    <div class="h-screen flex flex-col items-center bg-teal-50">
-      <div class="p-2 w-full flex justify-between items-center border-b-1 border-b-teal-100">
-        <div
-          class="transition-opacity duration-400"
-          [class.opacity-100]="!showSideMenu()"
-          [class.opacity-0]="showSideMenu()"
-        >
-          @if (!showSideMenu()) {
-            <shared-toggle-sidemenu/>
-          }
-        </div>
-        <span></span>
-        <conversation-user-menu/>
+  <!-- Main Content -->
+  <div
+    class="transition-all duration-300 overflow-hidden"
+    [ngClass]="{
+      'w-0 md:w-full': showSideMenu(),
+      'w-full': !showSideMenu()
+    }"
+  >
+    <div class="relative flex flex-col items-center bg-teal-50 h-screen">
+      <shared-header class="w-full" [isMobile]="isMobile()!"/>
+
+      <!-- Router Outlet Content -->
+      <div class="w-full">
+        <router-outlet/>
       </div>
-
-      <router-outlet/>
-
     </div>
   </div>
 

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
-import { SideMenuService } from '../services/side-menu.service';
+import { SideMenuService } from '../../services/side-menu.service';
 
 @Component({
   selector: 'shared-toggle-sidemenu',
