@@ -1,9 +1,11 @@
+import { NgClass } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
-  signal,
+  inject, OnDestroy,
+  signal, ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, tap } from 'rxjs';
@@ -18,11 +20,19 @@ import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'conversation-chat',
-  imports: [ MessageInputComponent, MessageListComponent ],
+  imports: [ MessageListComponent, MessageInputComponent, NgClass ],
   templateUrl: './chat.component.html',
+  styles: [ `
+    .pb-dynamic {
+      padding-bottom: var(--pb);
+    }
+  ` ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ChatComponent {
+export default class ChatComponent implements AfterViewInit, OnDestroy {
+
+  @ViewChild('messageInput') messageInput!: MessageInputComponent;
+  private resizeObserver!: ResizeObserver;
 
   private route = inject(ActivatedRoute);
   private chattingService = inject(ChattingService);
@@ -46,6 +56,21 @@ export default class ChatComponent {
 
   constructor() {
     this.loadChatId();
+  }
+
+  ngAfterViewInit() {
+    const element = this.messageInput.messageInput.nativeElement;
+
+    this.resizeObserver = new ResizeObserver(() => {
+      const height = element.offsetHeight;
+      document.documentElement.style.setProperty('--pb', `${ height + 96 }px`);
+    });
+
+    this.resizeObserver.observe(element);
+  }
+
+  public ngOnDestroy() {
+    if (this.resizeObserver) this.resizeObserver.disconnect();
   }
 
   private loadChatId(): void {

@@ -1,14 +1,15 @@
 <div
-  class=""
+  class="relative h-screen w-full"
 >
   <conversation-message-list
-    class="overflow-y-auto custom-scrollbar w-full"
+    class="absolute top-0 pb-dynamic overflow-y-auto custom-scrollbar w-full"
     [class.h-screen]="messages().length != 0"
     [messages]="messages()"
   />
 
   <conversation-message-input
+    #messageInput
     (messageToSend)="sendMessage($event)"
-    class="flex-1 w-full"
+    class="absolute bottom-0 w-full z-10 "
   />
 </div>

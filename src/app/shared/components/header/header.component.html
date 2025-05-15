@@ -1,7 +1,7 @@
 @if (isMobile()) {
   <div class="p-2 flex justify-between items-center border-b-1 border-b-teal-100">
     <div
-      class="transition-opacity duration-400"
+      class="transition-opacity duration-300"
       [ngClass]="{
             'opacity-100': !showSideMenu(),
             'opacity-0': showSideMenu()
@@ -14,17 +14,19 @@
     <conversation-user-menu/>
   </div>
 } @else {
-  <div
-    class="absolute left-0 top-0 py-3 px-2 transition-opacity duration-400"
-    [ngClass]="{
+  <div class="relative">
+    <div
+      class="absolute z-10 left-0 top-0 py-3 px-2 transition-opacity duration-400"
+      [ngClass]="{
             'opacity-100': !showSideMenu(),
             'opacity-0': showSideMenu()
           }"
-  >
-    @if (!showSideMenu()) {
-      <shared-toggle-sidemenu/>
-    }
-  </div>
+    >
+      @if (!showSideMenu()) {
+        <shared-toggle-sidemenu/>
+      }
+    </div>
 
-  <conversation-user-menu class="absolute right-0 top-0 p-2"/>
+    <conversation-user-menu class="absolute z-10 right-0 top-0 p-2"/>
+  </div>
 }

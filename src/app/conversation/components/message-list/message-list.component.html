@@ -1,9 +1,17 @@
-<div class="flex flex-col px-56">
-  @for (message of messages(); track $index) {
-    <div class="my-4"
-         [ngClass]="[message.role === 'user'? 'bg-teal-200 max-w-[75%] py-2 px-4 rounded-xl self-end': 'self-start']"
-    >
-      {{ message.text }}
-    </div>
-  }
+<div class="flex flex-col items-center">
+  <div
+    class="flex flex-col max-w-[85%] transition-all duration-300"
+    [ngClass]="{
+      'md:max-w-[65%]': showSideMenu(),
+      'md:max-w-[55%]': !showSideMenu()
+    }"
+  >
+    @for (message of messages(); track $index) {
+      <div class="my-4"
+           [ngClass]="[message.role === 'user'? 'bg-teal-200 max-w-[75%] py-2 px-4 rounded-xl self-end': 'self-start']"
+      >
+        {{ message.text }}
+      </div>
+    }
+  </div>
 </div>
