@@ -1,11 +1,13 @@
-import { NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject, OnDestroy,
-  signal, ViewChild,
+  ElementRef,
+  inject,
+  OnDestroy,
+  signal,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { finalize, tap } from 'rxjs';
@@ -20,7 +22,7 @@ import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'conversation-chat',
-  imports: [ MessageListComponent, MessageInputComponent, NgClass ],
+  imports: [ MessageListComponent, MessageInputComponent ],
   templateUrl: './chat.component.html',
   styles: [ `
     .pb-dynamic {
@@ -32,7 +34,10 @@ import { MessageService } from '../../services/message.service';
 export default class ChatComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('messageInput') messageInput!: MessageInputComponent;
+  @ViewChild('messageList', { read: ElementRef }) messageList!: ElementRef<HTMLDivElement>;
+
   private resizeObserver!: ResizeObserver;
+  private autoScrollEnabled = true;
 
   private route = inject(ActivatedRoute);
   private chattingService = inject(ChattingService);
@@ -97,6 +102,18 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
       );
   }
 
+  public onUserScroll(): void {
+    const listContainer = this.messageList.nativeElement;
+    const atBottom = listContainer.scrollHeight - listContainer.scrollTop === listContainer.clientHeight;
+    this.autoScrollEnabled = true;
+  }
+
+  private scrollToBottom(): void {
+    if (this.autoScrollEnabled) {
+      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
+    }
+  }
+
   public sendMessage(userMessage: string): void {
     this.newMessageIsLoading(true);
     this.addUserMessage(userMessage);
@@ -111,7 +128,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   private addUserMessage(text: string): void {
-    this.addMessage({ id: '', role: 'user', text });
+    this.addMessage({ id: '', role: 'user', text: text });
   }
 
   private addAssistantPlaceholder(): void {
@@ -124,6 +141,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
 
     this._newMessageState.update(state => ({ ...state, data: [ ...state.data, partMessage ] }));
     this.updateLastMessageInStream();
+    this.scrollToBottom();
   }
 
   private newMessageIsLoading(loading: boolean): void {

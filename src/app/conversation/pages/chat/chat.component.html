@@ -2,14 +2,16 @@
   class="relative h-screen w-full"
 >
   <conversation-message-list
-    class="absolute top-0 pb-dynamic overflow-y-auto custom-scrollbar w-full"
+    #messageList
+    class="absolute top-0 bottom-0 pb-dynamic overflow-y-auto custom-scrollbar scroll-smooth w-full"
     [class.h-screen]="messages().length != 0"
     [messages]="messages()"
+    (scroll)="onUserScroll()"
   />
 
   <conversation-message-input
     #messageInput
     (messageToSend)="sendMessage($event)"
-    class="absolute bottom-0 w-full z-10 "
+    class="absolute bottom-16 md:bottom-0 w-full z-10 "
   />
 </div>

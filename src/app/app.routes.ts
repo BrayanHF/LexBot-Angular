@@ -7,14 +7,19 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        title: 'New Chat',
+        title: 'Nuevo Chat',
         loadComponent: () => import('./conversation/pages/new-chat/new-chat.component'),
       },
       {
         path: 'c/:chatId',
-        title: 'Conversation',
+        title: 'Chat',
         loadComponent: () => import('./conversation/pages/chat/chat.component'),
       },
+      {
+        path: 'generate/:document',
+        title: 'Generar Documento',
+        loadComponent: () => import('./conversation/pages/generate-document/generate-document.component')
+      }
     ],
   },
   {
