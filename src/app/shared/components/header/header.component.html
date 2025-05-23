@@ -11,12 +11,18 @@
         <shared-toggle-sidemenu/>
       }
     </div>
+
+    <h2
+      *ngIf="document_labels.includes(title.getTitle())"
+      class="font-semibold"
+    >{{ title.getTitle() }}</h2>
+
     <conversation-user-menu/>
   </div>
 } @else {
   <div class="relative">
     <div
-      class="absolute z-10 left-0 top-0 py-3 px-2 transition-opacity duration-400"
+      class="absolute z-10 left-0 top-0 py-3 px-2 transition-opacity duration-300"
       [ngClass]="{
             'opacity-100': !showSideMenu(),
             'opacity-0': showSideMenu()
@@ -26,6 +32,15 @@
         <shared-toggle-sidemenu/>
       }
     </div>
+
+    <h2
+      *ngIf="document_labels.includes(title.getTitle())"
+      class="font-bold absolute z-10 top-5 transition-all duration-300"
+      [ngClass]="{
+            'left-14': !showSideMenu(),
+            'left-4': showSideMenu()
+          }"
+    >{{ title.getTitle() }}</h2>
 
     <conversation-user-menu class="absolute z-10 right-0 top-0 p-2"/>
   </div>

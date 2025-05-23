@@ -33,6 +33,8 @@ import { MessageService } from '../../services/message.service';
 })
 export default class ChatComponent implements AfterViewInit, OnDestroy {
 
+  // todo: http request not work in google chrome
+
   @ViewChild('messageInput') messageInput!: MessageInputComponent;
   @ViewChild('messageList', { read: ElementRef }) messageList!: ElementRef<HTMLDivElement>;
 
@@ -102,11 +104,20 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
       );
   }
 
-  public onUserScroll(): void {
-    const listContainer = this.messageList.nativeElement;
-    const atBottom = listContainer.scrollHeight - listContainer.scrollTop === listContainer.clientHeight;
-    this.autoScrollEnabled = true;
+
+  private previousScrollTop: number = 0;
+
+  public onUserScroll(event: Event): void {
+    const target = event.target as HTMLElement;
+    const currentScrollTop = target.scrollTop;
+
+    if (currentScrollTop < this.previousScrollTop) {
+      this.autoScrollEnabled = false;
+    }
+
+    this.previousScrollTop = currentScrollTop;
   }
+
 
   private scrollToBottom(): void {
     if (this.autoScrollEnabled) {
@@ -115,15 +126,21 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   public sendMessage(userMessage: string): void {
+    this.autoScrollEnabled = true;
     this.newMessageIsLoading(true);
     this.addUserMessage(userMessage);
     this.addAssistantPlaceholder();
+    this.scrollToBottom();
 
     this.chattingService
       .starChatting({ chatId: this.chatId(), message: userMessage })
       .pipe(
         tap(res => this.handleAssistantResponse(res)),
-        finalize(() => this.newMessageIsLoading(false))
+        finalize(() => {
+          this.newMessageIsLoading(false);
+          this._newMessageState.update(state => ({ ...state, data: [] }));
+          this.scrollToBottom();
+        })
       ).subscribe();
   }
 

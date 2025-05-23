@@ -1,8 +1,30 @@
 <div class="h-screen bg-teal-200 p-2 flex flex-col justify-between">
 
-  <div class="flex justify-between items-center my-1.5">
-    <shared-toggle-sidemenu/>
-    <h1 [routerLink]="['/chat']" class="text-2xl font-bold mr-1">LexBot</h1>
+  <div>
+    <div class="flex justify-between items-center my-1.5">
+      <shared-toggle-sidemenu/>
+      <h1 [routerLink]="['/chat']" class="text-2xl font-bold mr-1">LexBot</h1>
+    </div>
+    <h2 class="font-bold">Chats</h2>
+    <div
+      [routerLink]="['/chat']"
+      class="p-2 hover:bg-teal-500 cursor-pointer rounded-xl mb-4">
+      <div class="flex items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          class="size-6 mr-2"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <p class="overflow-hidden whitespace-nowrap">Nuevo Chat</p>
+      </div>
+    </div>
   </div>
 
   <div class="relative flex-1">
@@ -97,23 +119,19 @@
     </div>
   </div>
 
-  <div
-    [routerLink]="['/chat']"
-    class="p-2 hover:bg-teal-500 cursor-pointer rounded-xl">
-    <div class="flex items-center">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        class="size-6 mr-2"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
-          clip-rule="evenodd"
-        />
-      </svg>
-      <p class="overflow-hidden whitespace-nowrap">Nuevo Chat</p>
+  <div>
+    <div>
+      <h2 class="font-bold">Documentos</h2>
+      @for (doc of allDocuments; track $index) {
+        <div
+          [routerLink]="doc.value.path"
+          routerLinkActive="bg-teal-300"
+          class="p-2 my-1 hover:bg-teal-500 cursor-pointer rounded-xl">
+          <div class="flex items-center">
+            <p class="overflow-hidden whitespace-nowrap">{{ doc.value.label }}</p>
+          </div>
+        </div>
+      }
     </div>
   </div>
 </div>

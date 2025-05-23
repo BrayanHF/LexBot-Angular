@@ -8,6 +8,7 @@ export interface RightPetitionRequest {
   email: string,
   city: string,
   address: string,
+
   recipient: string,
   facts: string,
   request: string,

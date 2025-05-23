@@ -6,7 +6,7 @@
     class="absolute top-0 bottom-0 pb-dynamic overflow-y-auto custom-scrollbar scroll-smooth w-full"
     [class.h-screen]="messages().length != 0"
     [messages]="messages()"
-    (scroll)="onUserScroll()"
+    (scroll)="onUserScroll($event)"
   />
 
   <conversation-message-input
