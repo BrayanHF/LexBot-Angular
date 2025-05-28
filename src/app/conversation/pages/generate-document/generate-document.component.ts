@@ -16,6 +16,8 @@ import { ActivatedRoute } from '@angular/router';
 import { DocumentGenerator } from '../../../generate/interfaces/document-generator,interface';
 import { ComplaintService } from '../../../generate/services/complaint.service';
 import { validateDocument } from '../../../generate/helpers/helper';
+import { HabeasDataService } from '../../../generate/services/habeas-data.service';
+import { PowerOfAttorneyService } from '../../../generate/services/power-of-attorney.service';
 import { DOCUMENT_GENERATORS, DocumentGeneratorType } from '../../../shared/types/document-generators';
 
 import { RightPetitionService } from '../../../generate/services/right-petition.service';
@@ -52,6 +54,8 @@ export default class GenerateDocumentComponent implements AfterViewInit, OnDestr
   public currentService = signal<DocumentGenerator | null>(null);
   public rightPetitionService = inject(RightPetitionService);
   public complaintService = inject(ComplaintService);
+  public powerOfAttorneyService = inject(PowerOfAttorneyService);
+  public habeasDataService = inject(HabeasDataService);
 
   public documentToGenerate = signal('');
 
@@ -85,8 +89,8 @@ export default class GenerateDocumentComponent implements AfterViewInit, OnDestr
   private servicesMap: Record<DocumentGeneratorType, DocumentGenerator> = {
     'right-petition': this.rightPetitionService,
     'complaint': this.complaintService,
-    'power-of-attorney': this.rightPetitionService,
-    'habeas-data': this.rightPetitionService,
+    'power-of-attorney': this.powerOfAttorneyService,
+    'habeas-data': this.habeasDataService,
   };
 
   ngAfterViewInit(): void {

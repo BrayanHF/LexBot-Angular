@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
 import { ComplaintRequest } from '../interfaces/complaint-request.interface';
+import { DocumentId } from '../interfaces/document-id.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ComplaintService extends DocumentGeneratorBase {
@@ -32,6 +33,36 @@ export class ComplaintService extends DocumentGeneratorBase {
     "¿Tienes datos de notificación de la otra persona?",
     "¿Vas a anexar documentos además de este generado? Si sí, ¿cuáles?"
   ];
+
+  public override answers = [
+    "Bogotá D.C.",
+    "Laura Marcela Gómez Rincón",
+    "3214567890",
+    "lauragomez@example.com",
+    "Medellín",
+    "Carrera 45 #103-22, Medellín",
+    "Inspección de Policía de Medellín",
+    "Querella por perturbación a la posesión",
+    "Carlos Andrés Herrera López",
+    "C.C. 1.023.456.789 de Cali",
+    "Vive en la casa vecina: Carrera 45 #103-24, Medellín. Tel: 3109876543",
+    "El señor Herrera ha invadido parte de mi terreno levantando un muro que atraviesa el lindero, pese a que ya fue advertido verbalmente del límite establecido en escrituras.",
+    "Fotografías del muro, copia del certificado de tradición y libertad, escritura pública de compra, testimonios de vecinos",
+    "Sí, intenté hablar con él el 10 de abril y también le envié una carta, pero se negó a retirar el muro y dijo que era 'su derecho'",
+    "Solicito que la autoridad ordene el retiro del muro, se restablezca el límite original del terreno y se impongan las sanciones correspondientes.",
+    "Fotocopia de la escritura, certificado de tradición, carta enviada al señor Herrera, fotos del muro",
+    "Sí, tengo videos del día en que construyeron el muro y testigos que vieron la invasión.",
+    "Sí, solicito una inspección ocular del predio y la citación de los testigos vecinos",
+    "Carrera 45 #103-22, Medellín",
+    "Teléfono: 3109876543, Dirección: Carrera 45 #103-24, Medellín",
+    "Sí, voy a anexar copia de la escritura pública, certificado de tradición y fotografías impresas del muro."
+  ];
+
+  public override startQuestions(documentId: DocumentId) {
+    this.documentId = documentId;
+    this.generatePDF();
+  }
+
 
   public override generatePDF(): void {
     if (!this.documentId) return;
@@ -72,8 +103,9 @@ export class ComplaintService extends DocumentGeneratorBase {
         a.download = `Querella_${ cRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: () => {
+      error: err => {
         this.pushAssistantMessage('Error al comunicarse con el servidor.');
+        console.log(err);
       }
     });
   }

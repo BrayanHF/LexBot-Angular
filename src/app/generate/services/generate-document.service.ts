@@ -23,19 +23,19 @@ export class GenerateDocumentService {
   }
 
   public generateRightPetitionPDF(rpRequest: RightPetitionRequest): Observable<Blob> {
-    return this.http.post<Blob>(`${ this.baseUrl }/right-petition`, rpRequest);
+    return this.http.post(`${ this.baseUrl }/right-petition`, rpRequest, { responseType: "blob" });
   }
 
   public generateComplaintPDF(complaintRequest: ComplaintRequest): Observable<Blob> {
-    return this.http.post<Blob>(`${ this.baseUrl }/complaint`, complaintRequest);
+    return this.http.post(`${ this.baseUrl }/complaint`, complaintRequest, { responseType: "blob" });
   }
 
   public generateSpecialPowerPDF(spRequest: SpecialPowerRequest): Observable<Blob> {
-    return this.http.post<Blob>(`${ this.baseUrl }/power-of-attorney`, spRequest);
+    return this.http.post(`${ this.baseUrl }/power-of-attorney`, spRequest, { responseType: "blob" });
   }
 
   public generateHabeasDataPDF(hdRequest: HabeasDataRequest): Observable<Blob> {
-    return this.http.post<Blob>(`${ this.baseUrl }/habeas-data`, hdRequest);
+    return this.http.post(`${ this.baseUrl }/habeas-data`, hdRequest, { responseType: "blob" });
   }
 
 }

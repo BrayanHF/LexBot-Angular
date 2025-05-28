@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { DocumentIDType } from '../../conversation/enum/document-id-type.enum';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
+import { DocumentId } from '../interfaces/document-id.interface';
 import { SpecialPowerRequest } from '../interfaces/special-power-request.interface';
 
 @Injectable({
@@ -27,6 +29,34 @@ export class PowerOfAttorneyService extends DocumentGeneratorBase {
     "¿Por cuánto tiempo quieres que dure el poder?",
     "¿Vas a anexar otros documentos? ¿Cuáles?"
   ]
+
+  public override answers = [
+    "Cali, Valle del Cauca",
+    "Ana María Torres Gómez",
+    "3001234567",
+    "ana.torres@example.com",
+    "Cali",
+    "Calle 23 #45-67, Cali",
+    "Luis Fernando Martínez Rodríguez",
+    "3107654321",
+    "luis.martinez@example.com",
+    "Carrera 10 #22-58, Cali",
+    "Facultar al apoderado para representarme ante entidades bancarias, suscribir documentos relacionados con el préstamo hipotecario de mi vivienda y gestionar desembolsos.",
+    "Seis meses contados a partir de la firma del presente poder.",
+    "Copia de mi cédula de ciudadanía; copia de la matrícula inmobiliaria de mi vivienda."
+  ];
+
+
+  public override startQuestions(documentId: DocumentId) {
+    this.documentId = documentId;
+    this.agentDocumentId = {
+      type: DocumentIDType.CedulaCiudadania,
+      number: "2323232332",
+      expedition: '',
+      error: null
+    }
+    this.generatePDF();
+  }
 
   override generatePDF(): void {
     if (!this.documentId || !this.agentDocumentId) return;

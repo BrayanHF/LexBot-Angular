@@ -19,8 +19,8 @@ export abstract class DocumentGeneratorBase implements DocumentGenerator {
   abstract documentType: DocumentGeneratorType;
   abstract questions: string[];
 
-  public startQuestions(document: DocumentId): void {
-    this.documentId = document;
+  public startQuestions(documentId: DocumentId): void {
+    this.documentId = documentId;
     this.currentQuestionIndex = 0;
     this.answers = [];
     this.messages.set([]);
@@ -62,12 +62,15 @@ export abstract class DocumentGeneratorBase implements DocumentGenerator {
     const link = this.pdfLink();
     if (link) {
       link.click();
-      URL.revokeObjectURL(link.href);
     }
   }
 
   public cleanAll(): void {
-    this.pdfLink.set(null);
+    const link = this.pdfLink();
+    if (link) {
+      URL.revokeObjectURL(link.href);
+      this.pdfLink.set(null);
+    }
     this.messages.set([]);
     this.documentId = null;
     this.currentQuestionIndex = 0;
