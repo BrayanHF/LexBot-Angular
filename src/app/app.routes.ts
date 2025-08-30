@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 
 export const routes: Routes = [
   {
@@ -23,8 +23,34 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'auth',
+    loadComponent: () => import('./auth/auth.component'),
+    children: [
+      {
+        path: 'login',
+        title: 'Iniciar Sesion',
+        loadComponent: () => import('./auth/pages/login/login.component'),
+      },
+      {
+        path: 'register',
+        title: 'Registrate',
+        loadComponent: () => import('./auth/pages/register/register.component'),
+      },
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
     path: '',
     redirectTo: 'chat',
     pathMatch: 'full',
   },
+  {
+    path: '**',
+    redirectTo: 'chat',
+    pathMatch: 'full',
+  }
 ];
