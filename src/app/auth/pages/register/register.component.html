@@ -1,5 +1,9 @@
 <div class="">
-  <section class="rounded-md p-2 bg-white">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="rounded-md p-2 bg-white"
+  >
     <div class="flex items-center justify-center my-3">
       <div class="xl:mx-auto shadow-md p-4 xl:w-full xl:max-w-sm 2xl:max-w-md">
         <div class="mb-2"></div>
@@ -20,33 +24,46 @@
                   placeholder="Nombre completo"
                   type="text"
                   class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="user_name"
+                  name="displayName"
+                  formControlName="displayName"
                 />
+                <div *ngIf="form.get('displayName')?.touched">
+                  <small *ngIf="form.get('displayName')?.hasError('required')">El nombre es obligatorio</small>
+                </div>
               </div>
             </div>
             <div>
               <label class="text-base font-medium text-gray-900">
                 Correo
               </label>
-              <div class="mt-2">
+              <div class="m-2">
                 <input
                   placeholder="Correo"
                   type="email"
                   class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                   name="email"
+                  formControlName="email"
                 />
+                <div *ngIf="form.get('email')?.touched">
+                  <small *ngIf="form.get('email')?.hasError('required')">El email es obligatorio</small>
+                  <small *ngIf="form.get('email')?.hasError('email')">Formato de email inválido</small>
+                </div>
               </div>
 
               <label class="text-base font-medium text-gray-900">
                 Confirmar correo
               </label>
-              <div class="mt-2">
+              <div class="m-2">
                 <input
                   placeholder="Confirmar correo"
                   type="email"
                   class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="email"
+                  name="confirm_email"
+                  formControlName="confirm_email"
                 />
+                <div *ngIf="form.get('confirm_email')?.touched">
+                  <small *ngIf="form.hasError('emailMismatch')">Los correos no coinciden</small>
+                </div>
               </div>
             </div>
             <div>
@@ -55,13 +72,18 @@
                   Contraseña
                 </label>
               </div>
-              <div class="mt-2">
+              <div class="m-2">
                 <input
                   placeholder="Contraseña"
                   type="password"
                   class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="password1"
+                  name="password"
+                  formControlName="password"
                 />
+                <div *ngIf="form.get('password')?.touched">
+                  <small *ngIf="form.get('password')?.hasError('required')">La contraseña es obligatoria</small>
+                  <small *ngIf="form.get('password')?.hasError('minlength')">Debe tener al menos 6 caracteres</small>
+                </div>
               </div>
 
               <div class="flex items-center justify-between">
@@ -69,19 +91,24 @@
                   Confirmar contraseña
                 </label>
               </div>
-              <div class="mt-2">
+              <div class="m-2">
                 <input
                   placeholder="Confirmar c  ontraseña"
                   type="password"
                   class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                  name="password2"
+                  name="confirm_password"
+                  formControlName="confirm_password"
                 />
+                <div *ngIf="form.get('confirm_password')?.touched">
+                  <small *ngIf="form.hasError('passwordMismatch')">Las contraseñas no coinciden</small>
+                </div>
               </div>
             </div>
             <div>
               <button
                 class="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
                 type="button"
+                (click)="onSubmit()"
               >
                 Crear una cuenta
               </button>
@@ -90,5 +117,5 @@
         </form>
       </div>
     </div>
-  </section>
+  </form>
 </div>
