@@ -1,8 +1,11 @@
-import {Routes} from '@angular/router';
+import { Routes } from '@angular/router';
+import { authGuard } from './auth/guards/auth.guard';
+import { noAuthGuard } from './auth/guards/no-auth.guard';
 
 export const routes: Routes = [
   {
     path: 'chat',
+    canActivate: [ authGuard ],
     loadComponent: () => import('./conversation/conversation.component'),
     children: [
       {
@@ -24,6 +27,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
+    canActivate: [ noAuthGuard ],
     loadComponent: () => import('./auth/auth.component'),
     children: [
       {

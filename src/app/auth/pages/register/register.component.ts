@@ -9,7 +9,7 @@ import {
   Validators
 } from '@angular/forms';
 import { NgIf } from '@angular/common';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -61,14 +61,7 @@ export default class RegisterComponent {
       this.form.value.displayName!,
       this.form.value.email!,
       this.form.value.password!
-    ).subscribe({
-      next: apiResponse => {
-        // TODO
-      },
-      error: (e) => {
-        // TODO
-      }
-    });
+    ).subscribe();
   }
 
   private isValidForm(): boolean {

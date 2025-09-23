@@ -7,10 +7,15 @@
       <h2 class="text-center text-2xl font-bold leading-tight text-black">
         Inicio de Sesión
       </h2>
-      <p [routerLink]="['/auth/register']" class="mt-2 text-center text-sm text-gray-600 hover:underline cursor-pointer">
+      <p [routerLink]="['/auth/register']"
+         class="mt-2 text-center text-sm text-gray-600 hover:underline cursor-pointer">
         ¿No tienes una cuenta? Créela clicando aqui
       </p>
-      <form class="mt-8" method="POST" action="#">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="mt-8" method="POST"
+      >
         <div class="space-y-5">
           <div>
             <label class="text-base font-medium text-gray-900">
@@ -21,6 +26,8 @@
                 placeholder="Correo"
                 type="email"
                 class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                name="email"
+                formControlName="email"
               />
             </div>
           </div>
@@ -42,6 +49,8 @@
                 placeholder="Contraseña"
                 type="password"
                 class="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                name="password"
+                formControlName="password"
               />
             </div>
           </div>
@@ -49,6 +58,7 @@
             <button
               class="inline-flex w-full items-center justify-center rounded-md bg-black px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-black/80"
               type="button"
+              (click)="onSubmit()"
             >
               Iniciar sesión
             </button>

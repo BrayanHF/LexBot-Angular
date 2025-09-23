@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Chat } from '../interfaces/chat.interface';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { Message } from '../interfaces/message.interface';
 

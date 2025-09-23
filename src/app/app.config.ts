@@ -1,11 +1,8 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, withRouterConfig } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import {
-  provideHttpClient,
-  withInterceptorsFromDi,
-} from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi, } from '@angular/common/http';
 import { firebaseProviders } from '../firebase.config';
 
 export const appConfig: ApplicationConfig = {
