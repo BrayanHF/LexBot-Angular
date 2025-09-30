@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -15,6 +15,7 @@ export default class LoginComponent {
 
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   public form = this.fb.group({
       email: new FormControl("", [ Validators.required, Validators.email ]),
@@ -31,7 +32,15 @@ export default class LoginComponent {
     this.authService.login(
       this.form.value.email!,
       this.form.value.password!
-    ).subscribe();
+    ).subscribe(
+      {
+        next: user => {
+          if (user) {
+            void this.router.navigate([ '/chat' ]);
+          }
+        }
+      }
+    );
   }
 
   private isValidForm(): boolean {

@@ -1,9 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { SseClient } from 'ngx-sse-client';
 import { AIChatRequest } from '../interfaces/ai-chat-request.interface';
-import { map, Observable, takeWhile } from 'rxjs';
+import { map, Observable, switchMap, takeWhile } from 'rxjs';
 import { ChattingResponse } from '../interfaces/chatting-response.interface';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,33 +12,37 @@ import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 export class ChattingService {
 
   private baseUrl = 'http://localhost:8080/chatting';
-
   private sseClient = inject(SseClient);
+  private authService = inject(AuthService);
 
   private chattingRequest(
     isStream: boolean,
     chatRequest: AIChatRequest
   ): Observable<string> {
 
-    // todo: Implement JWT
-
     const url = isStream ? `${ this.baseUrl }/stream` : this.baseUrl;
-    return this.sseClient
-      .stream(
-        url,
-        {
-          keepAlive: false,
-          reconnectionDelay: 0,
-          responseType: 'text',
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: chatRequest,
-        },
-        'POST'
+
+    return this.authService.currentIdToken$().pipe(
+      switchMap(token =>
+        this.sseClient
+          .stream(
+            url,
+            {
+              keepAlive: false,
+              reconnectionDelay: 0,
+              responseType: 'text',
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token,
+              },
+              body: chatRequest,
+            },
+            'POST'
+          )
       )
+    );
   }
 
   public starChatting(

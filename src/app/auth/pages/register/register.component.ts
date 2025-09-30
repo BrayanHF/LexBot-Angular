@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   AbstractControl,
   FormBuilder,
@@ -24,6 +24,7 @@ export default class RegisterComponent {
 
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private router = inject(Router);
 
   public form = this.fb.group({
       displayName: new FormControl("", [ Validators.required ]),
@@ -61,7 +62,14 @@ export default class RegisterComponent {
       this.form.value.displayName!,
       this.form.value.email!,
       this.form.value.password!
-    ).subscribe();
+    ).subscribe(
+      {
+        next: user => {
+          if (user) {
+            void this.router.navigate([ '/chat' ]);
+          }
+        }
+      });
   }
 
   private isValidForm(): boolean {

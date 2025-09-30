@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { Message } from '../interfaces/message.interface';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,18 @@ import { Message } from '../interfaces/message.interface';
 export class MessageService {
 
   private baseUrl = 'http://localhost:8080/messages';
-
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
-  // todo: jwt
   public getMessages(chatId: string): Observable<LBApiResponse<Message[]>> {
-    return this.http.get<LBApiResponse<Message[]>>(`${ this.baseUrl }/chat-id/${ chatId }`);
+    return this.authService.currentIdToken$().pipe(
+      switchMap(token =>
+        this.http.get<LBApiResponse<Message[]>>(
+          `${ this.baseUrl }/chat-id/${ chatId }`,
+          { headers: { Authorization: `Bearer ${ token }` } }
+        )
+      )
+    );
   }
 
 }

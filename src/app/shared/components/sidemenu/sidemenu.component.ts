@@ -6,6 +6,7 @@ import { DOCUMENT_GENERATORS } from '../../types/document-generators';
 import { ToggleSidemenuComponent } from '../toggle-sidemenu/toggle-sidemenu.component';
 import { ChatService } from '../../../conversation/services/chat.service';
 import { State } from '../../../conversation/interfaces/state.interface';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'shared-sidemenu',
@@ -57,8 +58,10 @@ export class SidemenuComponent {
   private loadChats(showLoading: boolean = true, callback?: () => void): void {
     if (showLoading) this.setChatsLoading(true);
 
-    this.chatService.getChats().subscribe({
-      next: res => this._stateChats.update(s => ({ ...s, data: res.data })),
+    this.chatService.getChats().pipe(take(1)).subscribe({
+      next: res => {
+        this._stateChats.update(s => ({ ...s, data: res.data }))
+      },
       complete: () => {
         if (showLoading) this.setChatsLoading(false);
         callback?.();

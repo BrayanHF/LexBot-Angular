@@ -7,10 +7,9 @@ import {
   updateProfile,
   User
 } from '@angular/fire/auth';
-import { BehaviorSubject, filter, from, switchMap } from 'rxjs';
+import { BehaviorSubject, from, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LBApiResponse } from '../../conversation/interfaces/lb-api-response.interface';
-import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -19,30 +18,14 @@ export class AuthService {
 
   private auth = inject(Auth);
   private http = inject(HttpClient);
-  private router = inject(Router);
   private readonly baseUrl = 'http://localhost:8080/user';
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser = this.currentUserSubject.asObservable();
-  public readonly userLoggedIn$ = this.currentUser.pipe(
-    filter((user): user is User => !!user)
-  );
+  private currentUserSubject = new BehaviorSubject<User | null | undefined>(undefined);
+  public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
     onAuthStateChanged(this.auth, (user) => {
       this.currentUserSubject.next(user);
-
-      console.log(user);
-
-      if (user) {
-        if (this.router.url.startsWith('/auth')) {
-          void this.router.navigate([ '/chat' ]);
-        }
-      } else {
-        if (!this.router.url.startsWith('/auth')) {
-          void this.router.navigate([ '/auth/login' ]);
-        }
-      }
     });
   }
 
@@ -70,6 +53,18 @@ export class AuthService {
       `${ this.baseUrl }/new`,
       { email: email, displayName: displayName },
       { headers: { Authorization: `Bearer ${ idToken }` } }
+    );
+  }
+
+  public currentIdToken$() {
+    return this.currentUser$.pipe(
+      switchMap(user => {
+        if (user) {
+          return from(user.getIdToken());
+        } else {
+          return from([""]);
+        }
+      })
     );
   }
 
