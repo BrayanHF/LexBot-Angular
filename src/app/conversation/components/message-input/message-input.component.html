@@ -8,7 +8,7 @@
       'md:max-w-[55%]': !showSideMenu()
     }"
   >
-    <div class="p-2 bg-teal-100 rounded-3xl text-base text-black">
+    <div (click)="focusInput()" class="p-2 bg-teal-100 rounded-3xl text-base text-black cursor-text">
       <div
         #messageInput
         (keydown)="onKeyDown($event)"
@@ -16,12 +16,7 @@
         class="max-h-48 overflow-y-auto custom-scrollbar px-4 py-2 outline-none break-all whitespace-pre-wrap"
       >
       </div>
-      <div class="flex justify-between">
-        <div>
-          <button>
-            <!--        todo: generated documents-->
-          </button>
-        </div>
+      <div class="flex justify-end">
         <button
           class="cursor-pointer"
           (click)="sendMessage()"

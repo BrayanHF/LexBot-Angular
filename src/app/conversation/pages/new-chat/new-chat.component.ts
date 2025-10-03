@@ -28,7 +28,7 @@ export default class NewChatComponent {
         tap(res => this.chatState.setChatId(res.data.chatId))
       )
       .subscribe({
-        error: err => console.error('Error al iniciar el chat:', err)
+        error: err => console.error('Error al iniciar el chat: ', err)
       });
   }
 }

@@ -10,6 +10,7 @@ import {
 import { BehaviorSubject, from, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LBApiResponse } from '../../conversation/interfaces/lb-api-response.interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class AuthService {
 
   private auth = inject(Auth);
   private http = inject(HttpClient);
+  private router = inject(Router);
   private readonly baseUrl = 'http://localhost:8080/user';
 
   private currentUserSubject = new BehaviorSubject<User | null | undefined>(undefined);
@@ -48,12 +50,10 @@ export class AuthService {
       );
   }
 
-  private addNewUser(email: string, displayName: string, idToken: string) {
-    return this.http.post<LBApiResponse<boolean>>(
-      `${ this.baseUrl }/new`,
-      { email: email, displayName: displayName },
-      { headers: { Authorization: `Bearer ${ idToken }` } }
-    );
+  public logout() {
+    return from(this.auth.signOut()).subscribe(
+      () => void this.router.navigate([ '/auth/login' ])
+    )
   }
 
   public currentIdToken$() {
@@ -62,9 +62,17 @@ export class AuthService {
         if (user) {
           return from(user.getIdToken());
         } else {
-          return from([""]);
+          return from([ "" ]);
         }
       })
+    );
+  }
+
+  private addNewUser(email: string, displayName: string, idToken: string) {
+    return this.http.post<LBApiResponse<boolean>>(
+      `${ this.baseUrl }/new`,
+      { email: email, displayName: displayName },
+      { headers: { Authorization: `Bearer ${ idToken }` } }
     );
   }
 

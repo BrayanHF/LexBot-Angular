@@ -26,9 +26,6 @@ export default class LoginComponent {
   public onSubmit() {
     if (!this.isValidForm()) return;
 
-    console.log(this.form.value.email!);
-    console.log(this.form.value.password!);
-
     this.authService.login(
       this.form.value.email!,
       this.form.value.password!

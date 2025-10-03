@@ -33,8 +33,6 @@ import { MessageService } from '../../services/message.service';
 })
 export default class ChatComponent implements AfterViewInit, OnDestroy {
 
-  // todo: http request not work in google chrome
-
   @ViewChild('messageInput') messageInput!: MessageInputComponent;
   @ViewChild('messageList', { read: ElementRef }) messageList!: ElementRef<HTMLDivElement>;
 
