@@ -5,6 +5,7 @@ import { map, Observable, switchMap, takeWhile } from 'rxjs';
 import { ChattingResponse } from '../interfaces/chatting-response.interface';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { AuthService } from '../../auth/services/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ export class ChattingService {
   private baseUrl = 'http://localhost:8080/chatting';
   private sseClient = inject(SseClient);
   private authService = inject(AuthService);
+  private http = inject(HttpClient);
 
   private chattingRequest(
     isStream: boolean,
@@ -58,6 +60,18 @@ export class ChattingService {
           true // Emit the last value
         )
       );
+  }
+
+  public newChat(chatRequest: AIChatRequest): Observable<LBApiResponse<string>> {
+    return this.authService.currentIdToken$().pipe(
+      switchMap(token =>
+        this.http.post<LBApiResponse<string>>(
+          `${ this.baseUrl }/newChat`,
+          chatRequest,
+          { headers: { Authorization: `Bearer ${ token }` } }
+        )
+      )
+    );
   }
 
 }

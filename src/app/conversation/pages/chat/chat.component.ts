@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { finalize, tap } from 'rxjs';
+import { combineLatest, filter, finalize, firstValueFrom, tap } from 'rxjs';
 import { MessageInputComponent } from '../../components/message-input/message-input.component';
 import { MessageListComponent } from "../../components/message-list/message-list.component";
 import { ChattingResponse } from '../../interfaces/chatting-response.interface';
@@ -59,11 +59,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   public newMessage = computed(() => this._newMessageState().data);
   public newMessageLoading = computed(() => this._newMessageState().loading);
 
-  constructor() {
-    this.loadChatId();
-  }
-
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     const element = this.messageInput.messageInput.nativeElement;
 
     this.resizeObserver = new ResizeObserver(() => {
@@ -72,18 +68,28 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
     });
 
     this.resizeObserver.observe(element);
-  }
 
-  public ngOnDestroy() {
-    if (this.resizeObserver) this.resizeObserver.disconnect();
-  }
+    const [ params, queryParams ] = await firstValueFrom(
+      combineLatest([
+        this.route.params.pipe(filter(p => !!p['chatId'])),
+        this.route.queryParams
+      ])
+    );
 
-  private loadChatId(): void {
-    this.route.params.subscribe(params => {
-      const id = params['chatId'] as string;
-      this.chatId.set(id);
+    const id = params['chatId'];
+    const message = queryParams['message'];
+
+    this.chatId.set(id);
+
+    if (message) {
+      this.sendMessage(message);
+    } else {
       this.getMessages();
-    });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.resizeObserver) this.resizeObserver.disconnect();
   }
 
   private getMessages(): void {
@@ -126,8 +132,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   public sendMessage(userMessage: string): void {
     this.autoScrollEnabled = true;
     this.newMessageIsLoading(true);
-    this.addUserMessage(userMessage);
-    this.addAssistantPlaceholder();
+    this.addUserAndPlaceholder({ id: "", text: userMessage, role: "user" }, { id: "", text: "...", role: "assistant" });
     this.scrollToBottom();
 
     this.chattingService
@@ -140,14 +145,6 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
           this.scrollToBottom();
         })
       ).subscribe();
-  }
-
-  private addUserMessage(text: string): void {
-    this.addMessage({ id: '', role: 'user', text: text });
-  }
-
-  private addAssistantPlaceholder(): void {
-    this.addMessage({ id: '', role: 'assistant', text: '...' });
   }
 
   private handleAssistantResponse(res: LBApiResponse<ChattingResponse>): void {
@@ -173,20 +170,22 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
     }));
   }
 
-  private addMessage(message: Message): void {
+  private addUserAndPlaceholder(userMessage: Message, placeholder: Message): void {
     this._messagesState.update(state => ({
       ...state,
-      data: [ ...state.data, message ]
+      data: [ ...(state.data ?? []), userMessage, placeholder ]
     }));
   }
 
   private updateLastMessageInStream(): void {
     const generatedMessage = this.newMessage().join('');
 
-    const currentMessage = this._messagesState().data;
-    const messages = [ ...currentMessage ];
+    const currentMessages = this._messagesState().data;
 
-    messages[messages.length - 1] = { ...messages[messages.length - 1], text: generatedMessage };
+    const messages = [ ...currentMessages ];
+    const lastIndex = messages.length - 1;
+
+    messages[lastIndex] = { ...messages[lastIndex], text: generatedMessage };
 
     this._messagesState.update(state => ({ ...state, data: messages }));
   }
