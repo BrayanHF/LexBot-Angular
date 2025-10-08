@@ -1,4 +1,4 @@
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Chat } from '../../../conversation/interfaces/chat.interface';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ChatStateService } from '../../../conversation/services/chat-state.service';
@@ -16,7 +16,6 @@ import { take } from 'rxjs';
 })
 export class SidemenuComponent {
 
-  private router = inject(Router);
   private chatState = inject(ChatStateService);
   private chatService = inject(ChatService);
 
@@ -50,32 +49,35 @@ export class SidemenuComponent {
       const ids = this.chats().map(chat => chat.id);
 
       if (!ids.includes(chatId)) {
-        this.loadChats(false, () => this.navigateToChat(chatId));
+        this.loadChats(false);
       }
     });
   }
 
-  private loadChats(showLoading: boolean = true, callback?: () => void): void {
+  private loadChats(showLoading: boolean = true): void {
     if (showLoading) this.setChatsLoading(true);
 
     this.chatService.getChats().pipe(take(1)).subscribe({
       next: res => {
-        this._stateChats.update(s => ({ ...s, data: res.data }))
+        const sorted = res.data
+          .map(chat => ({
+            ...chat,
+            lastUse: new Date(chat.lastUse)
+          }))
+          .sort((a, b) => b.lastUse.getTime() - a.lastUse.getTime());
+
+        this._stateChats.update(s => ({ ...s, data: sorted }));
       },
       complete: () => {
         if (showLoading) this.setChatsLoading(false);
-        callback?.();
       },
       error: () => this.setChatsLoading(false)
     });
   }
 
+
   private setChatsLoading(loading: boolean): void {
     this._stateChats.update(s => ({ ...s, loading }));
-  }
-
-  private navigateToChat(id: string): void {
-    void this.router.navigate([ `/chat/c/${ id }` ]);
   }
 
   public showOptions(): void {

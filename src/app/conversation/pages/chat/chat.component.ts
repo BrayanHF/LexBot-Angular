@@ -9,8 +9,8 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, finalize, firstValueFrom, tap } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { combineLatest, distinctUntilChanged, filter, finalize, firstValueFrom, map, tap } from 'rxjs';
 import { MessageInputComponent } from '../../components/message-input/message-input.component';
 import { MessageListComponent } from "../../components/message-list/message-list.component";
 import { ChattingResponse } from '../../interfaces/chatting-response.interface';
@@ -19,6 +19,7 @@ import { Message } from '../../interfaces/message.interface';
 import { State } from '../../interfaces/state.interface';
 import { ChattingService } from '../../services/chatting.service';
 import { MessageService } from '../../services/message.service';
+import { ChatStateService } from '../../services/chat-state.service';
 
 @Component({
   selector: 'conversation-chat',
@@ -40,8 +41,10 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   private autoScrollEnabled = true;
 
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private chattingService = inject(ChattingService);
   private messageService = inject(MessageService);
+  private chatState = inject(ChatStateService);
 
   private chatId = signal('');
 
@@ -82,10 +85,35 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
     this.chatId.set(id);
 
     if (message) {
-      this.sendMessage(message);
+      this.sendMessage(
+        message,
+        () => {
+          this.chatState.setChatId(this.chatId());
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {},
+            replaceUrl: true
+          });
+        }
+      );
     } else {
       this.getMessages();
     }
+
+    this.route.params
+      .pipe(
+        map(params => params['chatId']),
+        filter((id): id is string => !!id),
+        distinctUntilChanged(),
+        tap(id => {
+          if (id !== this.chatId()) {
+            this.chatId.set(id);
+            this._messagesState.set({ data: [], loading: false });
+            this.getMessages();
+          }
+        }),
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -108,7 +136,6 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
       );
   }
 
-
   private previousScrollTop: number = 0;
 
   public onUserScroll(event: Event): void {
@@ -129,7 +156,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  public sendMessage(userMessage: string): void {
+  public sendMessage(userMessage: string, callback?: () => void): void {
     this.autoScrollEnabled = true;
     this.newMessageIsLoading(true);
     this.addUserAndPlaceholder({ id: "", text: userMessage, role: "user" }, { id: "", text: "...", role: "assistant" });
@@ -143,6 +170,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
           this.newMessageIsLoading(false);
           this._newMessageState.update(state => ({ ...state, data: [] }));
           this.scrollToBottom();
+          callback?.();
         })
       ).subscribe();
   }

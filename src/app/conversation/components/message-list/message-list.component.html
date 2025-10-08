@@ -7,10 +7,19 @@
     }"
   >
     @for (message of messages(); track $index) {
-      <div class="my-4"
-           [ngClass]="[message.role === 'user'? 'bg-teal-200 max-w-[75%] py-2 px-4 rounded-xl self-end': 'self-start']"
+      <div
+        class="my-4"
+        [ngClass]="[
+          message.role === 'user'
+            ? 'bg-teal-200 max-w-[75%] py-2 px-4 rounded-xl self-end'
+            : 'self-start'
+        ]"
       >
-        {{ message.text }}
+        @if (message.role === 'assistant') {
+          <conversation-ai-message-viewer [text]="message.text"></conversation-ai-message-viewer>
+        } @else {
+          {{ message.text }}
+        }
       </div>
     }
   </div>
