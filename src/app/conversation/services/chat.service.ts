@@ -48,9 +48,9 @@ export class ChatService {
     );
   }
 
-  public deleteChat(chatId: string): Observable<LBApiResponse<String>> {
+  public deleteChat(chatId: string): Observable<LBApiResponse<boolean>> {
     return this.authService.currentIdToken$().pipe(
-      switchMap(token => this.http.delete<LBApiResponse<String>>(
+      switchMap(token => this.http.delete<LBApiResponse<boolean>>(
           `${ this.baseUrl }/chat-id/${ chatId }`,
           { headers: { Authorization: `Bearer ${ token }` } }
         )

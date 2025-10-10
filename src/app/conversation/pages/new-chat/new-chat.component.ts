@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MessageInputComponent } from '../../components/message-input/message-input.component';
 import { ChattingService } from "../../services/chatting.service";
 import { Router } from '@angular/router';
+import { getRandomChatGreeting } from '../../utils/chat-greetings';
 
 @Component({
   selector: 'conversation-new-chat',
@@ -10,10 +11,16 @@ import { Router } from '@angular/router';
   ],
   templateUrl: './new-chat.component.html',
 })
-export default class NewChatComponent {
+export default class NewChatComponent implements OnInit {
 
   private chattingService = inject(ChattingService);
   private router = inject(Router);
+
+  public greeting = '';
+
+  ngOnInit(): void {
+    this.greeting = getRandomChatGreeting()
+  }
 
   public startNewChatWithMessage(userMessage: string): void {
     const message = {

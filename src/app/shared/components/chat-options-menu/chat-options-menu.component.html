@@ -1,0 +1,21 @@
+<div
+  *ngIf="visible()"
+  class="absolute right-10 w-40 bg-white shadow-lg rounded-xl p-1 z-50 border border-gray-400"
+  [class.top-full]="!showAbove()"
+  [class.bottom-full]="showAbove()"
+  [style.top.px]="!showAbove() ? triggerHeight() + 4 : undefined"
+  [style.bottom.px]="showAbove() ? triggerHeight() + 4 : undefined"
+>
+<!--  <button-->
+<!--    class="w-full text-left p-2 rounded-lg hover:bg-teal-200 cursor-pointer"-->
+<!--  >-->
+<!--    Renombrar-->
+<!--  </button>-->
+
+  <button
+    (click)="deleteChat(); $event.stopPropagation()"
+    class="w-full text-left p-2 rounded-lg hover:bg-teal-200 cursor-pointer"
+  >
+    Eliminar
+  </button>
+</div>

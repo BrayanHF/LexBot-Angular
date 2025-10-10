@@ -1,4 +1,4 @@
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Chat } from '../../../conversation/interfaces/chat.interface';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { ChatStateService } from '../../../conversation/services/chat-state.service';
@@ -7,10 +7,14 @@ import { ToggleSidemenuComponent } from '../toggle-sidemenu/toggle-sidemenu.comp
 import { ChatService } from '../../../conversation/services/chat.service';
 import { State } from '../../../conversation/interfaces/state.interface';
 import { take } from 'rxjs';
+import { DeviceService } from '../../services/device.service';
+import { SideMenuService } from '../../services/side-menu.service';
+import { ChatOptionsMenuComponent } from '../chat-options-menu/chat-options-menu.component';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'shared-sidemenu',
-  imports: [ ToggleSidemenuComponent, RouterLink, RouterLinkActive ],
+  imports: [ ToggleSidemenuComponent, RouterLink, RouterLinkActive, ChatOptionsMenuComponent, NgIf ],
   templateUrl: './sidemenu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -18,6 +22,13 @@ export class SidemenuComponent {
 
   private chatState = inject(ChatStateService);
   private chatService = inject(ChatService);
+  private deviceService = inject(DeviceService);
+  private sideMenuService = inject(SideMenuService);
+  private router = inject(Router);
+
+  private isMobile = this.deviceService.isMobile;
+
+  public openOptionsId = signal<string | null>(null);
 
   private _stateChats = signal<State<Chat[]>>({
     data: [],
@@ -75,13 +86,33 @@ export class SidemenuComponent {
     });
   }
 
+  public onChatDeleted(deletedChatId: string): void {
+    const currentChatId = this.chatState.chatId();
+
+    if (deletedChatId === currentChatId) {
+      this.chatState.setChatId('');
+      void this.router.navigate([ '/chat' ]);
+    }
+    this.loadChats(false);
+  }
+
 
   private setChatsLoading(loading: boolean): void {
     this._stateChats.update(s => ({ ...s, loading }));
   }
 
-  public showOptions(): void {
-    // TODO: implement this
+  public autoCloseInMobile() {
+    if (this.isMobile() && this.sideMenuService.isOpen()) {
+      this.sideMenuService.toggleSideMenu();
+    }
+  }
+
+  public showOptions(chatId: string): void {
+    this.openOptionsId.set(this.openOptionsId() === chatId ? null : chatId);
+  }
+
+  public isOptionOpen(chatId: string) {
+    return this.openOptionsId() === chatId;
   }
 
 }

@@ -1,12 +1,12 @@
 <div class="w-full h-screen flex flex-col items-center justify-center">
 
-    <span class="flex-1 flex items-end text-3xl text-gray-600  mb-8">
-      Hola, en que te puedo ayudar hoy?
+    <span class="flex-1 flex justify-center items-end text-3xl text-gray-600 m-8 text-center">
+      {{ greeting }}
     </span>
 
-    <conversation-message-input
-      (messageToSend)="startNewChatWithMessage($event)"
-      class="flex-2 w-full"
-    />
+  <conversation-message-input
+    (messageToSend)="startNewChatWithMessage($event)"
+    class="flex-2 w-full"
+  />
 
 </div>
