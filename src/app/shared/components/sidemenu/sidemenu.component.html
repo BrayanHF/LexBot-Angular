@@ -115,6 +115,7 @@
             <shared-chat-options-menu
               *ngIf="isOptionOpen(chat.id)"
               [chatId]="chat.id"
+              [chatTitle]="chat.title"
               [trigger]="optionsDiv"
               [attr.data-key]="chat.id"
               (chatDeleted)="onChatDeleted($event)"

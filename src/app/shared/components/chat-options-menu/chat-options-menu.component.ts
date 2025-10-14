@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, inject, input, output, signal } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { ChatService } from '../../../conversation/services/chat.service';
-import { Router } from '@angular/router';
-import { ChatStateService } from '../../../conversation/services/chat-state.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'shared-chat-options-menu',
@@ -15,9 +14,11 @@ export class ChatOptionsMenuComponent implements AfterViewInit {
 
   private elementRef = inject(ElementRef);
   private chatService = inject(ChatService);
+  private dialogService = inject(DialogService);
 
   public trigger = input.required<HTMLElement>();
   public chatId = input.required<string>();
+  public chatTitle = input.required<string>();
 
   public chatDeleted = output<string>();
 
@@ -48,17 +49,29 @@ export class ChatOptionsMenuComponent implements AfterViewInit {
   }
 
   public deleteChat() {
+    this.visible.set(false);
 
-    this.chatService.deleteChat(this.chatId()).subscribe(
-      {
-        next: apiResponse => {
-          if (apiResponse.data) {
-            this.chatDeleted.emit(this.chatId());
+    this.dialogService.configDialog({
+      title: "Eliminar chat",
+      message: `¿Estás seguro de que quieres eliminar chat el chat con título "${ this.chatTitle() }"?
+                \n\nEsta acción no se puede deshacer.`,
+      showCancelBotton: true,
+      showDeleteBotton: true,
+      showConfirmBotton: false,
+      action: () => {
+        this.chatService.deleteChat(this.chatId()).subscribe(
+          {
+            next: apiResponse => {
+              if (apiResponse.data) {
+                this.chatDeleted.emit(this.chatId());
+              }
+            }
           }
-          this.visible.set(false);
-        }
+        )
       }
-    );
+    });
+
+    this.dialogService.showDialog.set(true);
 
   }
 

@@ -22,22 +22,22 @@ export class RightPetitionService extends DocumentGeneratorBase {
     "¿Qué exactamente solicitas (petición concreta)?"
   ];
 
-  public override answers = [
-    "Bogotá D.C.",
-    "Juan Camilo Pérez López",
-    "3124567890",
-    "juan.perez@example.com",
-    "Cali",
-    "Calle 10 #45-67, Cali",
-    "Secretaría de Salud Departamental del Valle del Cauca",
-    "El día 12 de abril del presente año solicité atención médica en el Hospital Universitario del Valle. Hasta la fecha no he recibido respuesta sobre el estado de mi caso ni me han entregado copia de la historia clínica, lo cual necesito para continuar con mi tratamiento.",
-    "Solicito se me entregue copia completa de mi historia clínica correspondiente a mi atención del 12 de abril de 2025, incluyendo informes, resultados de laboratorio y notas médicas."
-  ];
+  // public override answers = [
+  //   "Bogotá D.C.",
+  //   "Juan Camilo Pérez López",
+  //   "3124567890",
+  //   "juan.perez@example.com",
+  //   "Cali",
+  //   "Calle 10 #45-67, Cali",
+  //   "Secretaría de Salud Departamental del Valle del Cauca",
+  //   "El día 12 de abril del presente año solicité atención médica en el Hospital Universitario del Valle. Hasta la fecha no he recibido respuesta sobre el estado de mi caso ni me han entregado copia de la historia clínica, lo cual necesito para continuar con mi tratamiento.",
+  //   "Solicito se me entregue copia completa de mi historia clínica correspondiente a mi atención del 12 de abril de 2025, incluyendo informes, resultados de laboratorio y notas médicas."
+  // ];
 
-  public override startQuestions(documentId: DocumentId) {
-    this.documentId = documentId;
-    this.generatePDF();
-  }
+  // public override startQuestions(documentId: DocumentId) {
+  //   this.documentId = documentId;
+  //   this.generatePDF();
+  // }
 
   public override handleUserAnswers(userAnswer: string): void {
     if (!this.documentId || this.currentQuestionIndex >= this.questions.length) return;
