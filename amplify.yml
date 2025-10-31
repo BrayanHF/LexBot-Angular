@@ -5,9 +5,9 @@ frontend:
       commands:
         - echo "Installing dependencies..."
         - npm ci
-        - echo "Creating environments.prod.ts..."
+        - echo "Creating environments.ts..."
         - |
-          cat > src/environments/environments.prod.ts <<EOL
+          cat > src/environments/environments.ts <<EOL
           export const firebaseConfig = {
             apiKey: "${FIREBASE_API_KEY}",
             authDomain: "${FIREBASE_AUTH_DOMAIN}",
