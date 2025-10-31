@@ -4,13 +4,14 @@ import { Observable, switchMap } from 'rxjs';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { Message } from '../interfaces/message.interface';
 import { AuthService } from '../../auth/services/auth.service';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
 
-  private baseUrl = 'http://localhost:8080/messages';
+  private baseUrl = `${ environment.lbUrl }/messages`;
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 

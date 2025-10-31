@@ -9,6 +9,7 @@ import { SpecialPowerRequest } from '../interfaces/special-power-request.interfa
 import { ValidatedAnswer } from '../interfaces/validated-answer.interface';
 import { ComplaintRequest } from '../interfaces/complaint-request.interface';
 import { AuthService } from '../../auth/services/auth.service';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class GenerateDocumentService {
 
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private readonly baseUrl = 'http://localhost:8080/generate';
+  private readonly baseUrl = `${ environment.lbUrl }/generate`;
   private readonly baseUrlValidate = this.baseUrl + '/validate-answer';
 
   public validateAnswer(questionAnswer: QuestionAnswer, type: DocumentGeneratorType): Observable<ValidatedAnswer> {

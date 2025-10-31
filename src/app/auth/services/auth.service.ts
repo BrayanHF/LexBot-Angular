@@ -11,6 +11,7 @@ import { BehaviorSubject, from, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LBApiResponse } from '../../conversation/interfaces/lb-api-response.interface';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class AuthService {
   private auth = inject(Auth);
   private http = inject(HttpClient);
   private router = inject(Router);
-  private readonly baseUrl = 'http://localhost:8080/user';
+  private readonly baseUrl = `${ environment.lbUrl }/user`;
 
   private currentUserSubject = new BehaviorSubject<User | null | undefined>(undefined);
   public currentUser$ = this.currentUserSubject.asObservable();

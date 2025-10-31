@@ -4,11 +4,12 @@ import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { Chat } from '../interfaces/chat.interface';
 import { Observable, switchMap } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
+import { environment } from '../../../environments/environments';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
 
-  private baseUrl = 'http://localhost:8080/chat';
+  private baseUrl = `${ environment.lbUrl }/chat`;
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 

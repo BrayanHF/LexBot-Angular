@@ -6,13 +6,14 @@ import { ChattingResponse } from '../interfaces/chatting-response.interface';
 import { LBApiResponse } from '../interfaces/lb-api-response.interface';
 import { AuthService } from '../../auth/services/auth.service';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChattingService {
 
-  private baseUrl = 'http://localhost:8080/chatting';
+  private baseUrl = `${ environment.lbUrl }/chatting`;
   private sseClient = inject(SseClient);
   private authService = inject(AuthService);
   private http = inject(HttpClient);

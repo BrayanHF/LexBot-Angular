@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
   AbstractControl,
@@ -25,6 +25,9 @@ export default class RegisterComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+
+  public showPassword = signal(false);
+  public showPasswordConfirm = signal(false);
 
   public form = this.fb.group({
       displayName: new FormControl("", [ Validators.required ]),
@@ -74,6 +77,14 @@ export default class RegisterComponent {
 
   private isValidForm(): boolean {
     return true;
+  }
+
+  public toggleShowPassword(): void {
+    this.showPassword.set(!this.showPassword());
+  }
+
+  public toggleShowPasswordConfirm(): void {
+    this.showPasswordConfirm.set(!this.showPasswordConfirm());
   }
 
 }

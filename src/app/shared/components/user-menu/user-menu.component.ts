@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, s
 import { AuthService } from '../../../auth/services/auth.service';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 import { filter, map, take } from 'rxjs';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'conversation-user-menu',
@@ -17,6 +18,7 @@ export class UserMenuComponent {
 
   private authService = inject(AuthService);
   private elementRef = inject(ElementRef);
+  private dialogService = inject(DialogService);
 
   public currentUserLetter = this.authService.currentUser$.pipe(
     filter(user => user !== undefined),
@@ -33,7 +35,18 @@ export class UserMenuComponent {
   }
 
   public logout() {
-    this.authService.logout();
+    this.toggleMenu();
+
+    this.dialogService.configDialog({
+      title: "Cerrar sesión",
+      message: "¿Estás seguro de que deseas cerrar sesión? Tendrás que iniciar sesión nuevamente para acceder a tu cuenta.",
+      showCancelBotton: true,
+      showConfirmBotton: true,
+      showDeleteBotton: false,
+      action: () => this.authService.logout()
+    });
+
+    this.dialogService.showDialog.set(true);
   }
 
   @HostListener('document:click', [ '$event' ])

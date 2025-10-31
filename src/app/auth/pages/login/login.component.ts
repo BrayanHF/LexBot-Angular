@@ -1,13 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   imports: [
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgIf
   ],
   templateUrl: './login.component.html',
 })
@@ -16,6 +18,8 @@ export default class LoginComponent {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+
+  public showPassword = signal(false);
 
   public form = this.fb.group({
       email: new FormControl("", [ Validators.required, Validators.email ]),
@@ -42,6 +46,10 @@ export default class LoginComponent {
 
   private isValidForm(): boolean {
     return true;
+  }
+
+  public toggleShowPassword() {
+    this.showPassword.set(!this.showPassword());
   }
 
 }
