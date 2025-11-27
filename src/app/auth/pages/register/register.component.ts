@@ -58,7 +58,7 @@ export default class RegisterComponent {
     }
   }
 
-  public onSubmit() {
+  public onRegister() {
     if (!this.isValidForm()) return;
 
     this.authService.register(

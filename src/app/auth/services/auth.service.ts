@@ -2,12 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import {
   Auth,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
   User
 } from '@angular/fire/auth';
-import { BehaviorSubject, from, switchMap } from 'rxjs';
+import { BehaviorSubject, from, map, of, switchMap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { LBApiResponse } from '../../conversation/interfaces/lb-api-response.interface';
 import { Router } from '@angular/router';
@@ -51,6 +53,38 @@ export class AuthService {
       );
   }
 
+  public loginWithGoogle() {
+    const provider = new GoogleAuthProvider();
+
+    return from(signInWithPopup(this.auth, provider)).pipe(
+      switchMap(userCredential => {
+        const user = userCredential.user;
+
+        return from(user.getIdToken()).pipe(
+          switchMap(idToken =>
+
+            this.userExists(user.uid, idToken).pipe(
+              switchMap(lbApiResponse => {
+
+                if (!lbApiResponse.data) {
+                  return this.addNewUser(
+                    user.email!,
+                    user.displayName || "",
+                    idToken
+                  ).pipe(
+                    map(() => user)
+                  );
+                }
+
+                return of(user);
+              })
+            )
+          )
+        );
+      })
+    );
+  }
+
   public logout() {
     return from(this.auth.signOut()).subscribe(
       () => void this.router.navigate([ '/auth/login' ])
@@ -73,6 +107,14 @@ export class AuthService {
     return this.http.post<LBApiResponse<boolean>>(
       `${ this.baseUrl }/new`,
       { email: email, displayName: displayName },
+      { headers: { Authorization: `Bearer ${ idToken }` } }
+    );
+  }
+
+  private userExists(uid: string, idToken: string) {
+    return this.http.post<LBApiResponse<boolean>>(
+      `${ this.baseUrl }/exists`,
+      { uid },
       { headers: { Authorization: `Bearer ${ idToken }` } }
     );
   }
