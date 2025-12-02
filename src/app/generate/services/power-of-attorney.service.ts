@@ -30,33 +30,33 @@ export class PowerOfAttorneyService extends DocumentGeneratorBase {
     "¿Vas a anexar otros documentos? ¿Cuáles?"
   ]
 
-  public override answers = [
-    "Cali, Valle del Cauca",
-    "Ana María Torres Gómez",
-    "3001234567",
-    "ana.torres@example.com",
-    "Cali",
-    "Calle 23 #45-67, Cali",
-    "Luis Fernando Martínez Rodríguez",
-    "3107654321",
-    "luis.martinez@example.com",
-    "Carrera 10 #22-58, Cali",
-    "Facultar al apoderado para representarme ante entidades bancarias, suscribir documentos relacionados con el préstamo hipotecario de mi vivienda y gestionar desembolsos.",
-    "Seis meses contados a partir de la firma del presente poder.",
-    "Copia de mi cédula de ciudadanía; copia de la matrícula inmobiliaria de mi vivienda."
-  ];
-
-
-  public override startQuestions(documentId: DocumentId) {
-    this.documentId = documentId;
-    this.agentDocumentId = {
-      type: DocumentIDType.CedulaCiudadania,
-      number: "2323232332",
-      expedition: '',
-      error: null
-    }
-    this.generatePDF();
-  }
+  // public override answers = [
+  //   "Cali, Valle del Cauca",
+  //   "Ana María Torres Gómez",
+  //   "3001234567",
+  //   "ana.torres@example.com",
+  //   "Cali",
+  //   "Calle 23 #45-67, Cali",
+  //   "Luis Fernando Martínez Rodríguez",
+  //   "3107654321",
+  //   "luis.martinez@example.com",
+  //   "Carrera 10 #22-58, Cali",
+  //   "Facultar al apoderado para representarme ante entidades bancarias, suscribir documentos relacionados con el préstamo hipotecario de mi vivienda y gestionar desembolsos.",
+  //   "Seis meses contados a partir de la firma del presente poder.",
+  //   "Copia de mi cédula de ciudadanía; copia de la matrícula inmobiliaria de mi vivienda."
+  // ];
+  //
+  //
+  // public override startQuestions(documentId: DocumentId) {
+  //   this.documentId = documentId;
+  //   this.agentDocumentId = {
+  //     type: DocumentIDType.CedulaCiudadania,
+  //     number: "2323232332",
+  //     expedition: '',
+  //     error: null
+  //   }
+  //   this.generatePDF();
+  // }
 
   override generatePDF(): void {
     if (!this.documentId || !this.agentDocumentId) return;
@@ -81,9 +81,11 @@ export class PowerOfAttorneyService extends DocumentGeneratorBase {
       attachedDocuments: this.answers[12],
     }
 
+    this.isGenerating.set(true);
     this.pushAssistantMessage('Generando documento, por favor espera...');
     this.generateDocumentService.generateSpecialPowerPDF(spRequest).subscribe({
       next: (pdfBlob) => {
+        this.isGenerating.set(false);
         const blob = new Blob([ pdfBlob ], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -91,9 +93,7 @@ export class PowerOfAttorneyService extends DocumentGeneratorBase {
         a.download = `Poder_${ spRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: () => {
-        this.pushAssistantMessage('Error al comunicarse con el servidor.');
-      }
+      error: e => this.handleGeneratingError()
     });
 
   }

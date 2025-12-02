@@ -11,6 +11,7 @@ export abstract class DocumentGeneratorBase implements DocumentGenerator {
 
   public pdfLink = signal<HTMLAnchorElement | null>(null);
   public messages = signal<Message[]>([]);
+  public isGenerating = signal(false);
   public documentId: DocumentId | null = null;
   public agentDocumentId: DocumentId | null = null;
   public currentQuestionIndex = 0;
@@ -38,8 +39,8 @@ export abstract class DocumentGeneratorBase implements DocumentGenerator {
       answer: userAnswer
     }, this.documentType).subscribe({
       next: (validation) => {
-        if (validation.error) {
-          this.pushAssistantMessage(validation.error);
+        if (validation.error || (validation.error == null && validation.result == null)) {
+          this.pushAssistantMessage(validation.error ?? "Hubo un error al validar tu respuesta. Intenta de nuevo más tarde.");
           return;
         }
 
@@ -75,6 +76,11 @@ export abstract class DocumentGeneratorBase implements DocumentGenerator {
     this.documentId = null;
     this.currentQuestionIndex = 0;
     this.answers = [];
+  }
+
+  public handleGeneratingError() {
+    this.isGenerating.set(false);
+    this.pushAssistantMessage('Parece que hubo un error en el servidor.');
   }
 
   protected pushUserMessage(text: string): void {

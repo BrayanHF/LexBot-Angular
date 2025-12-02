@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center">
   <div
-    class="w-full flex flex-col max-w-[85%] transition-all duration-300 pb-16 md:pb-0"
+    class="h-full w-full flex flex-col max-w-[85%] transition-all duration-300 pb-16 md:pb-0"
     [ngClass]="{
       'md:max-w-[65%]': showSideMenu(),
       'md:max-w-[55%]': !showSideMenu()
@@ -16,7 +16,12 @@
         ]"
       >
         @if (message.role === 'assistant') {
-          <conversation-ai-message-viewer [text]="message.text"></conversation-ai-message-viewer>
+          <div [ngClass]="{ 'assistant-loading': assistantMessageLoading() && $index === messages().length - 1 }">
+            <conversation-ai-message-viewer
+              [text]="message.text"
+              class="text-black"
+            />
+          </div>
         } @else {
           {{ message.text }}
         }

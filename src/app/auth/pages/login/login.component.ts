@@ -50,6 +50,9 @@ export default class LoginComponent {
             "Error",
             this.getOnLoginErrorMessage(error.code)
           );
+          this.form.patchValue({ password: '' });
+          this.form.get('password')?.markAsPristine();
+          this.form.get('password')?.markAsUntouched();
         }
       }
     );
@@ -72,6 +75,10 @@ export default class LoginComponent {
   }
 
   private isValidForm(): boolean {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return false;
+    }
     return true;
   }
 

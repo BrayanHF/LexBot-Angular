@@ -7,6 +7,7 @@ export interface DocumentGenerator {
 
   messages: Signal<Message[]>;
   pdfLink: Signal<HTMLAnchorElement | null>;
+  isGenerating: Signal<boolean>;
   documentId: DocumentId | null;
   questions: string[];
   answers: string[];

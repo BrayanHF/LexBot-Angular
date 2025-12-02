@@ -59,6 +59,11 @@ export default class GenerateDocumentComponent implements AfterViewInit, OnDestr
 
   public documentToGenerate = signal('');
 
+  public isGeneratingPDF = computed(() => {
+    const service = this.currentService();
+    return service ? service.isGenerating() : false;
+  });
+
   public form: FormGroup = this.fb.group({
     type: [ null, Validators.required ],
     number: [ '', [ Validators.required ] ]

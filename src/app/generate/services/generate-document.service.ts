@@ -31,7 +31,6 @@ export class GenerateDocumentService {
         )
       )
     );
-
   }
 
   public generateRightPetitionPDF(rpRequest: RightPetitionRequest): Observable<Blob> {

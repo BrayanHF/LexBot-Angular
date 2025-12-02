@@ -1,17 +1,70 @@
 <div
   class="relative h-screen w-full"
 >
-  <conversation-message-list
-    #messageList
-    class="absolute top-0 bottom-0 pb-dynamic overflow-y-auto custom-scrollbar scroll-smooth w-full"
-    [class.h-screen]="messages().length != 0"
-    [messages]="messages()"
-    (scroll)="onUserScroll($event)"
-  />
+  @if (messagesLoading()) {
+    <div class="flex justify-center items-center w-full h-full pb-16">
+      <svg class="max-w-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" overflow="visible"
+           fill="#000000"
+           stroke="none">
+        <defs>
+          <rect id="loader" x="46.5" y="40" width="7" height="20" rx="2" ry="2" transform="translate(0 -30)"/>
+        </defs>
+        <use xlink:href="#loader" transform="rotate(45 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.13s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.13s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(90 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.25s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.25s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(135 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.38s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.38s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(180 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.50s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.50s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(225 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.63s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.63s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(270 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.75s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.75s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(315 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0.88s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="0.88s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+        <use xlink:href="#loader" transform="rotate(360 50 50)">
+          <animate attributeName="opacity" values="0;1;0" dur="1s" begin="1.00s" repeatCount="indefinite"></animate>
+          <animateTransform attributeName="transform" type="translate" additive="sum" dur="1s" begin="1.00s"
+                            repeatCount="indefinite" from="0 0" to="10"></animateTransform>
+        </use>
+      </svg>
+    </div>
+  } @else {
+    <conversation-message-list
+      #messageList
+      class="absolute top-0 bottom-0 pb-dynamic overflow-y-auto custom-scrollbar scroll-smooth w-full"
+      [class.h-screen]="messages().length != 0"
+      [messages]="messages()"
+      [assistantMessageLoading]="newMessageLoading()"
+      (scroll)="onUserScroll($event)"
+    />
+  }
 
   <conversation-message-input
     #messageInput
     (messageToSend)="sendMessage($event)"
-    class="absolute bottom-16 md:bottom-0 w-full z-10 "
+    class="absolute bottom-16 md:bottom-0 w-full z-10"
   />
 </div>

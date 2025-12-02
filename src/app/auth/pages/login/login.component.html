@@ -14,7 +14,7 @@
       <form
         [formGroup]="form"
         (ngSubmit)="onLogin()"
-        class="mt-8" method="POST"
+        class="mt-8"
       >
         <div class="space-y-5">
           <div>
@@ -60,6 +60,7 @@
                 (click)="toggleShowPassword()"
                 type="button"
                 class="absolute h-10 inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
+                tabindex="-1"
               >
                 @if (showPassword()) {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -87,9 +88,12 @@
           </div>
           <div>
             <button
-              class="inline-flex w-full items-center justify-center rounded-md bg-teal-200 px-3.5 py-2.5 font-semibold leading-7 text-gray-700 hover:bg-teal-300/80 hover:text-black"
-              type="button"
-              (click)="onLogin()"
+              class="inline-flex w-full items-center justify-center rounded-md
+                   bg-teal-200 px-3.5 py-2.5 font-semibold leading-7 text-gray-700
+                   hover:bg-teal-300/80 hover:text-black
+                   disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed disabled:opacity-60"
+              type="submit"
+              [disabled]="form.invalid"
             >
               Iniciar sesión
             </button>

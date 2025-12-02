@@ -54,8 +54,8 @@ export class RightPetitionService extends DocumentGeneratorBase {
       answer: userAnswer
     }, "right-petition").subscribe({
       next: (validation) => {
-        if (validation.error) {
-          this.pushAssistantMessage(validation.error);
+        if (validation.error || (validation.error == null && validation.result == null)) {
+          this.pushAssistantMessage(validation.error ?? "Hubo un error al validar tu respuesta. Intenta de nuevo más tarde.");
           return;
         }
 
@@ -91,9 +91,11 @@ export class RightPetitionService extends DocumentGeneratorBase {
       request: this.answers[8],
     };
 
+    this.isGenerating.set(true);
     this.pushAssistantMessage('Generando documento, por favor espera...');
     this.generateDocumentService.generateRightPetitionPDF(rpRequest).subscribe({
       next: (pdfBlob) => {
+        this.isGenerating.set(true);
         console.log(pdfBlob);
         const blob = new Blob([ pdfBlob ], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -102,9 +104,7 @@ export class RightPetitionService extends DocumentGeneratorBase {
         a.download = `DP_${ rpRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: () => {
-        this.pushAssistantMessage('Error al comunicarse con el servidor.');
-      }
+      error: e => this.handleGeneratingError()
     });
   }
 

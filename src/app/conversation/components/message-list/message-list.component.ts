@@ -16,6 +16,7 @@ import { AiMessageViewerComponent } from '../ai-message-viewer/ai-message-viewer
 export class MessageListComponent {
 
   public messages = input.required<Message[]>();
+  public assistantMessageLoading = input.required<boolean>();
 
   private sideMenuService = inject(SideMenuService);
   public showSideMenu = computed(this.sideMenuService.isOpen);

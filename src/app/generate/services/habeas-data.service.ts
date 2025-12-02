@@ -25,25 +25,25 @@ export class HabeasDataService extends DocumentGeneratorBase {
     "¿Vas a anexar documentación que respalde tu solicitud? Si sí, ¿cuáles?"
   ];
 
-  public override answers = [
-    "Bogotá D.C.",
-    "Sofía Martínez López",
-    "3159876543",
-    "sofia.martinez@example.com",
-    "Barranquilla",
-    "Carrera 55 #23-12, Barranquilla",
-    "Banco de la República",
-    "Carrera 44 #36-15, Bogotá D.C.",
-    "conocer",
-    "toda la información crediticia y transaccional asociada a mi número de cédula",
-    "enero de 2020 a marzo de 2025",
-    "Copia de mi cédula de ciudadanía; certificado de afiliación a la entidad financiera."
-  ];
-
-  public override startQuestions(documentId: DocumentId) {
-    this.documentId = documentId;
-    this.generatePDF();
-  }
+  // public override answers = [
+  //   "Bogotá D.C.",
+  //   "Sofía Martínez López",
+  //   "3159876543",
+  //   "sofia.martinez@example.com",
+  //   "Barranquilla",
+  //   "Carrera 55 #23-12, Barranquilla",
+  //   "Banco de la República",
+  //   "Carrera 44 #36-15, Bogotá D.C.",
+  //   "conocer",
+  //   "toda la información crediticia y transaccional asociada a mi número de cédula",
+  //   "enero de 2020 a marzo de 2025",
+  //   "Copia de mi cédula de ciudadanía; certificado de afiliación a la entidad financiera."
+  // ];
+  //
+  // public override startQuestions(documentId: DocumentId) {
+  //   this.documentId = documentId;
+  //   this.generatePDF();
+  // }
 
   public override generatePDF(): void {
     if (!this.documentId) return;
@@ -63,10 +63,11 @@ export class HabeasDataService extends DocumentGeneratorBase {
       supportingDocuments: this.answers[11],
     }
 
-
+    this.isGenerating.set(true);
     this.pushAssistantMessage('Generando documento, por favor espera...');
     this.generateDocumentService.generateHabeasDataPDF(hdRequest).subscribe({
       next: (pdfBlob) => {
+        this.isGenerating.set(false);
         const blob = new Blob([ pdfBlob ], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -74,9 +75,7 @@ export class HabeasDataService extends DocumentGeneratorBase {
         a.download = `HD_${ hdRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: () => {
-        this.pushAssistantMessage('Error al comunicarse con el servidor.');
-      }
+      error: e => this.handleGeneratingError()
     });
 
   }

@@ -10,7 +10,17 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { combineLatest, distinctUntilChanged, filter, finalize, firstValueFrom, map, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  distinctUntilChanged,
+  EMPTY,
+  filter,
+  finalize,
+  firstValueFrom,
+  map,
+  tap
+} from 'rxjs';
 import { MessageInputComponent } from '../../components/message-input/message-input.component';
 import { MessageListComponent } from "../../components/message-list/message-list.component";
 import { ChattingResponse } from '../../interfaces/chatting-response.interface';
@@ -20,6 +30,7 @@ import { State } from '../../interfaces/state.interface';
 import { ChattingService } from '../../services/chatting.service';
 import { MessageService } from '../../services/message.service';
 import { ChatStateService } from '../../services/chat-state.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'conversation-chat',
@@ -40,6 +51,7 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   private resizeObserver!: ResizeObserver;
   private autoScrollEnabled = true;
 
+  private notificationService = inject(NotificationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private chattingService = inject(ChattingService);
@@ -125,15 +137,38 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
 
     this.messageService
       .getMessages(this.chatId())
-      .subscribe(
-        {
-          next: response => {
-            const messages = response.data;
-            this._messagesState.update(state => ({ ...state, data: messages }));
-          },
-          complete: () => this.messagesAreLoading(false)
-        }
-      );
+      .pipe(
+        tap(response => {
+          if (!response.success) {
+            this.handleGetMessageError(response.error ?? "Error en el servidor");
+          }
+
+          this.messagesAreLoading(false);
+          const messages = response.data;
+          this._messagesState.update(state => ({ ...state, data: messages }));
+          queueMicrotask(() => {
+            requestAnimationFrame(() => {
+              this.autoScrollEnabled = true;
+              this.scrollToBottom();
+            });
+          });
+        }),
+        catchError(_ => {
+          this.messagesAreLoading(false);
+          return EMPTY;
+        })
+      ).subscribe();
+  }
+
+  private handleGetMessageError(errorMessage: string): void {
+    const errorSummary = "Error al cargar el chat";
+    if (errorMessage == "Este chat no existe o fue eliminado") {
+      this.notificationService.error(errorSummary, errorMessage);
+      this.chatState.setChatId('');
+      void this.router.navigate([ '/chat' ]);
+    } else {
+      this.notificationService.error(errorSummary, errorMessage);
+    }
   }
 
   private previousScrollTop: number = 0;
@@ -149,37 +184,64 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
     this.previousScrollTop = currentScrollTop;
   }
 
-
   private scrollToBottom(): void {
-    if (this.autoScrollEnabled) {
-      this.messageList.nativeElement.scrollTop = this.messageList.nativeElement.scrollHeight;
-    }
+    if (!this.autoScrollEnabled) return;
+
+    setTimeout(() => {
+      const el = this.messageList.nativeElement;
+      el.scrollTop = el.scrollHeight;
+    }, 0);
   }
 
   public sendMessage(userMessage: string, callback?: () => void): void {
     this.autoScrollEnabled = true;
     this.newMessageIsLoading(true);
-    this.addUserAndPlaceholder({ id: "", text: userMessage, role: "user" }, { id: "", text: "...", role: "assistant" });
+    this.addUserAndPlaceholder(
+      { id: "", text: userMessage, role: "user" },
+      { id: "", text: "Haciendo búsquedas...", role: "assistant" }
+    );
     this.scrollToBottom();
 
+    const defaultErrorMessage = "Error inesperado en el servidor.";
     this.chattingService
       .starChatting({ chatId: this.chatId(), message: userMessage })
       .pipe(
-        tap(res => this.handleAssistantResponse(res)),
+        tap(res => {
+          if (!res.success || res.error != null) {
+            this.handleAssistantError(res.error ?? defaultErrorMessage);
+            return EMPTY;
+          }
+          return this.handleAssistantResponse(res)
+        }),
+        catchError(_ => {
+          this.handleAssistantError(defaultErrorMessage);
+          return EMPTY;
+        }),
         finalize(() => {
-          this.newMessageIsLoading(false);
-          this._newMessageState.update(state => ({ ...state, data: [] }));
-          this.scrollToBottom();
-          callback?.();
+          queueMicrotask(() => {
+            requestAnimationFrame(() => {
+              this._newMessageState.update(state => ({ ...state, data: [] }));
+              this.scrollToBottom();
+              callback?.();
+            });
+          });
         })
       ).subscribe();
   }
 
   private handleAssistantResponse(res: LBApiResponse<ChattingResponse>): void {
     const partMessage = res.data.aiChatResponse.choices[0].response.content;
-    if (!partMessage) return;
+    const finisReason = res.data.aiChatResponse.choices[0].finish_reason;
 
-    this._newMessageState.update(state => ({ ...state, data: [ ...state.data, partMessage ] }));
+    if ((partMessage == "" || partMessage == null) && finisReason == null) {
+      this.updateLastMessage("Pensando una respuesta...");
+      this.scrollToBottom();
+      return;
+    }
+
+    this.newMessageIsLoading(false);
+
+    this._newMessageState.update(state => ({ ...state, data: [ ...state.data, partMessage! ] }));
     this.updateLastMessageInStream();
     this.scrollToBottom();
   }
@@ -208,12 +270,20 @@ export default class ChatComponent implements AfterViewInit, OnDestroy {
   private updateLastMessageInStream(): void {
     const generatedMessage = this.newMessage().join('');
 
+    this.updateLastMessage(generatedMessage);
+  }
+
+  private handleAssistantError(error: string) {
+    this.updateLastMessage(`❌ ${ error }`);
+  }
+
+  private updateLastMessage(lastMessage: string) {
     const currentMessages = this._messagesState().data;
 
     const messages = [ ...currentMessages ];
     const lastIndex = messages.length - 1;
 
-    messages[lastIndex] = { ...messages[lastIndex], text: generatedMessage };
+    messages[lastIndex] = { ...messages[lastIndex], text: lastMessage };
 
     this._messagesState.update(state => ({ ...state, data: messages }));
   }

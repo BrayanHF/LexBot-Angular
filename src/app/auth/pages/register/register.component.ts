@@ -10,6 +10,9 @@ import {
 } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../../shared/services/notification.service';
+import { FirebaseError } from 'firebase/app';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +25,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export default class RegisterComponent {
 
+  private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -71,12 +75,51 @@ export default class RegisterComponent {
           if (user) {
             void this.router.navigate([ '/chat' ]);
           }
+        },
+        error: (error: FirebaseError | HttpErrorResponse) => {
+          this.handleOnRegisterError(error);
         }
       });
   }
 
   private isValidForm(): boolean {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return false;
+    }
     return true;
+  }
+
+  private handleOnRegisterError(error: FirebaseError | HttpErrorResponse) {
+    if ("code" in error) {
+      this.notificationService.error(
+        "Error al registrarse",
+        this.getOnRegisterErrorMessage(error.code)
+      );
+      return;
+    }
+
+    this.notificationService.error(
+      "Error inesperado",
+      "No pudimos completar el registro, intenta de nuevo."
+    );
+  }
+
+  private getOnRegisterErrorMessage(code: string): string {
+    switch (code) {
+      case "auth/email-already-in-use":
+        return "Este correo ya está registrado.";
+      case "auth/invalid-email":
+        return "El correo no es válido.";
+      case "auth/weak-password":
+        return "La contraseña es demasiado débil. Usa una más segura.";
+      case "auth/network-request-failed":
+        return "Error de red. Revisa tu conexión.";
+      case "auth/operation-not-allowed":
+        return "El registro con email está deshabilitado.";
+      default:
+        return "No se pudo completar el registro.";
+    }
   }
 
   public toggleShowPassword(): void {

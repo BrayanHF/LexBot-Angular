@@ -22,6 +22,7 @@
     "@angular/router": "^19.2.14",
     "@primeng/themes": "^20.3.0",
     "@tailwindcss/postcss": "^4.0.6",
+    "@tailwindcss/typography": "^0.5.19",
     "dompurify": "^3.2.7",
     "event-source-polyfill": "^1.0.31",
     "eventsource-polyfill": "^0.9.6",

@@ -58,6 +58,7 @@
     <conversation-message-list
       [class.h-screen]="messages().length != 0"
       [messages]="messages()"
+      [assistantMessageLoading]="this.isGeneratingPDF()"
     />
 
     <div *ngIf="pdfLink()" class="flex justify-center flex-col items-center w-full">
