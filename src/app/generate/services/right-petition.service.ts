@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
-import { DocumentId } from '../interfaces/document-id.interface';
 import { RightPetitionRequest } from '../interfaces/right-petition-request.interface';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
 
@@ -95,8 +94,7 @@ export class RightPetitionService extends DocumentGeneratorBase {
     this.pushAssistantMessage('Generando documento, por favor espera...');
     this.generateDocumentService.generateRightPetitionPDF(rpRequest).subscribe({
       next: (pdfBlob) => {
-        this.isGenerating.set(true);
-        console.log(pdfBlob);
+        this.isGenerating.set(false);
         const blob = new Blob([ pdfBlob ], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -104,7 +102,7 @@ export class RightPetitionService extends DocumentGeneratorBase {
         a.download = `DP_${ rpRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: e => this.handleGeneratingError()
+      error: _ => this.handleGeneratingError()
     });
   }
 

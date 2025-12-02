@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { DocumentIDType } from '../../conversation/enum/document-id-type.enum';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
-import { DocumentId } from '../interfaces/document-id.interface';
 import { SpecialPowerRequest } from '../interfaces/special-power-request.interface';
 
 @Injectable({
@@ -93,7 +91,7 @@ export class PowerOfAttorneyService extends DocumentGeneratorBase {
         a.download = `Poder_${ spRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: e => this.handleGeneratingError()
+      error: _ => this.handleGeneratingError()
     });
 
   }

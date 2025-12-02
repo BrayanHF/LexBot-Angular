@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
 import { ComplaintRequest } from '../interfaces/complaint-request.interface';
-import { DocumentId } from '../interfaces/document-id.interface';
 
 @Injectable({ providedIn: 'root' })
 export class ComplaintService extends DocumentGeneratorBase {
@@ -105,7 +104,7 @@ export class ComplaintService extends DocumentGeneratorBase {
         a.download = `Querella_${ cRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: e => this.handleGeneratingError()
+      error: _ => this.handleGeneratingError()
     });
   }
 

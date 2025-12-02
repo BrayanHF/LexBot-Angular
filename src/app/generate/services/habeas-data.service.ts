@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { DocumentGeneratorBase } from '../helpers/document-generator-base';
 import { DocumentGeneratorType } from '../../shared/types/document-generators';
-import { DocumentId } from '../interfaces/document-id.interface';
 import { HabeasDataRequest } from '../interfaces/habeas-data-request.interface';
 
 @Injectable({
@@ -75,7 +74,7 @@ export class HabeasDataService extends DocumentGeneratorBase {
         a.download = `HD_${ hdRequest.documentId.number }.pdf`;
         this.pdfLink.set(a);
       },
-      error: e => this.handleGeneratingError()
+      error: _ => this.handleGeneratingError()
     });
 
   }
